@@ -1,4 +1,4 @@
-using LuminousStudio.Data;
+using LuminousStudio.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
