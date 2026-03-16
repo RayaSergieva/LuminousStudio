@@ -18,6 +18,7 @@ namespace LuminousStudio.Infrastructure.Data.Entities
         public string ApplicationUserId { get; set; } = null!;
 
         [ForeignKey(nameof(ApplicationUserId))]
+        public virtual ApplicationUser ApplicationUser { get; set; } = null!;
 
         public decimal Price { get; set; }
     }

@@ -1,19 +1,25 @@
 ﻿using LuminousStudio.Infrastructure.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LuminousStudio.Infrastructure.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            this.Database.EnsureCreated();
         }
 
-        public DbSet<Manufacturer> Manufacturers { get; set; } = null!;
-        public DbSet<LampStyle> LampStyles { get; set; } = null!;
-        public DbSet<Order> Orders { get; set; } = null!;
-        public DbSet<TiffanyLamp> TiffanyLamps { get; set; } = null!;
-        public DbSet<ShoppingCart> ShoppingCarts { get; set; } = null!;
+        public DbSet<Manufacturer> Manufacturers { get; set; }
+
+        public DbSet<LampStyle> LampStyles { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<TiffanyLamp> TiffanyLamps { get; set; }
+
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     }
 }
