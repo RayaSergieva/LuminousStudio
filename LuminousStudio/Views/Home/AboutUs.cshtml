@@ -1,5 +1,23 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "About Us";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="about-section">
+    <div class="inner-container">
+        <h1>About Luminous Studio</h1>
+        <p class="text">
+            Based in the heart of Sofia, LuminousStudio was born from a single heirloom Tiffany lamp — a symbol of beauty, history, and warmth passed down through generations.
+            That quiet glow sparked a vision: to create a space where timeless craftsmanship meets modern storytelling.
+        </p>
+        <div class="skills">
+            <span>Unique</span>
+            <span>Handmade</span>
+            <span>Timeless</span>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/about.css" />
 }
