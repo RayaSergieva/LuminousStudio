@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Contacts";
+    ViewData["BodyClass"] = "contacts-page";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/contact-style.css" />
+    <script src="https://kit.fontawesome.com/aa7454d09f.js" crossorigin="anonymous"></script>
+}
+
+<section class="contact-form">
+    <h4 class="sectionHeader">contact us</h4>
+    <h1 class="heading">Get In Touch!</h1>
+
+    <div class="contactForm">
+        <form>
+            <h1 class="sub-heading">Need Support!</h1>
+            <p class="para para2">Contact us for a quote, help, or questions.</p>
+            <input type="text" class="input" placeholder="Your Name" />
+            <input type="email" class="input" placeholder="Your Email" />
+            <input type="text" class="input" placeholder="Your Subject" />
+            <textarea class="input" rows="5" placeholder="Your Message..."></textarea>
+            <input type="submit" class="input submit" value="Send Message" />
+        </form>
+
+        <div class="map-container">
+            <div class="mapBg"></div>
+            <div class="map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d5864.839307141897!2d23.349395183947156!3d42.69483419333614!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sbg!2sbg!4v1743873964020!5m2!1sbg!2sbg"
+                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="contactMethod">
+        <div class="method">
+            <i class="fa-solid fa-location-dot contactIcon"></i>
+            <article class="text">
+                <h1 class="sub-heading">Location</h1>
+                <p class="para">Sofia Center, 60 Knyaz Alexander Dondukov Blvd.</p>
+            </article>
+        </div>
+
+        <div class="method">
+            <i class="fa-solid fa-envelope contactIcon"></i>
+            <article class="text">
+                <h1 class="sub-heading">Email</h1>
+                <p class="para">luminousstudioofficial@gmail.com</p>
+            </article>
+        </div>
+
+        <div class="method">
+            <i class="fa-solid fa-phone contactIcon"></i>
+            <article class="text">
+                <h1 class="sub-heading">Phone</h1>
+                <p class="para">+359 88 776 7766</p>
+            </article>
+        </div>
+    </div>
+</section>

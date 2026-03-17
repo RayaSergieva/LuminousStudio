@@ -4,45 +4,149 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LuminousStudio</title>
-    <script type="importmap"></script>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tiffanylamps.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LuminousStudio.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
+
+    @RenderSection("Styles", required: false)
+
+    <style>
+        .navbar.glass {
+            background-color: rgba(0, 0, 0, 0.75) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown .btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .footer {
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+
+        body {
+            padding-top: 80px;
+        }
+
+        form.logout-form {
+            display: inline;
+        }
+    </style>
 </head>
-<body>
+<body class="@ViewData["BodyClass"]">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-dark fixed-top glass shadow">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LuminousStudio</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="AboutUs">About Us</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="TiffanyLamp" asp-action="Index">TiffanyLamps</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="lampStylesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Tiffany Lamp Styles
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="lampStylesDropdown">
+                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Table Lamp">Table Lamp</a></li>
+                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Floor Lamp">Floor Lamp</a></li>
+                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Chandelier">Chandelier</a></li>
+                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Wall Sconce">Wall Sconce</a></li>
+                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Pendant Lamp">Pendant Lamp</a></li>
+                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Ceiling Lamp">Ceiling Lamp</a></li>
+                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Banker’s Lamp">Banker’s Lamp</a></li>
+                            </ul>
+                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Order" asp-action="MyOrders">My Orders</a>
+                            </li>
+                        }
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Contacts">Contacts</a>
+                        </li>
+
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="statsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Statistic Module
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="statsDropdown">
+                                    <li><a class="dropdown-item" href="/Client/Index">Clients</a></li>
+                                    <li><a class="dropdown-item" href="/Order/Index">Orders</a></li>
+                                    <li><a class="dropdown-item" href="/Statistic/Index">Statistic</a></li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
-                    <partial name="_LoginPartial" />
+
+                    <ul class="navbar-nav d-flex flex-row align-items-center gap-3">
+                        <li class="nav-item">
+                            <a class="nav-link text-white position-relative" asp-controller="ShoppingCart" asp-action="Index">
+                                <i class="bi bi-cart"></i> Cart
+                            </a>
+                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-white">Hello @User.Identity.Name!</span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="logout-form">
+                                    <button type="submit" class="btn btn-link nav-link text-white">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - LuminousStudio - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="footer text-center mt-5">
+        <div class="container py-1">
+            <a asp-controller="Home" asp-action="AboutUs" class="text-white fs-5 mx-3">About us</a>
+            <a asp-controller="TiffanyLamp" asp-action="Index" class="text-white fs-5 mx-3">Tiffany Lamps</a>
+            <a asp-controller="Home" asp-action="Contacts" class="text-white fs-5 mx-3">Contacts</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

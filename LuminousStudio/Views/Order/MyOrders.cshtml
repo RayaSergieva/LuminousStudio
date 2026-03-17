@@ -1,0 +1,42 @@
+﻿@model IEnumerable<LuminousStudio.Models.Order.OrderIndexVM>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<video autoplay muted loop class="video-background">
+    <source src="~/videos/orders-bg.mp4" type="video/mp4">
+    \\
+</video>
+<div class="video-overlay"></div>
+
+<h1 class="fw-bold text-white mb-4">All Orders</h1>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var item in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm tiffany-card">
+                <img src="@item.Picture" class="card-img-top" alt="@item.TiffanyLamp" style="height: 300px; object-fit: cover;">
+
+                <div class="lamp-name-box text-center">
+                    @item.TiffanyLamp
+                </div>
+
+                <div class="card-body">
+                    <p class="card-text mb-1">
+                        <strong>User:</strong> @item.User<br />
+                        <strong>Order Date:</strong> @item.OrderDate<br />
+                        <strong>Quantity:</strong> @item.Quantity<br />
+                        <strong>Price:</strong> $@item.Price.ToString("0.00")<br />
+                        <strong>Total:</strong> $@item.TotalPrice.ToString("0.00")
+                    </p>
+
+                    @if (item.Discount > 0)
+                    {
+                        <span class="badge bg-success">Discount: @item.Discount.ToString("0.00")%</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

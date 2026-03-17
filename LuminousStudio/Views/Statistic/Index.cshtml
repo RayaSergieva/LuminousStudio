@@ -1,0 +1,66 @@
+﻿@using LuminousStudio.Models.Statistic
+@model StatisticVM
+
+@{
+    ViewData["Title"] = "Statistics";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">📊 Site Statistics</h2>
+
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Clients</h5>
+                    <p class="card-text display-6">@Model.CountClients</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Tiffany Lamps</h5>
+                    <p class="card-text display-6">@Model.CountTiffanyLamps</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Orders</h5>
+                    <p class="card-text display-6">@Model.CountOrders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <p class="card-text display-6">$@Model.SumOrders.ToString("F2")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.CountClients)</th>
+                    <th>@Html.DisplayNameFor(model => model.CountTiffanyLamps)</th>
+                    <th>@Html.DisplayNameFor(model => model.CountOrders)</th>
+                    <th>@Html.DisplayNameFor(model => model.SumOrders)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.CountClients</td>
+                    <td>@Model.CountTiffanyLamps</td>
+                    <td>@Model.CountOrders</td>
+                    <td>$@Model.SumOrders.ToString("F2")</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

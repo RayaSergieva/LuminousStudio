@@ -1,0 +1,106 @@
+﻿@model LuminousStudio.Models.ShoppingCart.ShoppingCartVM
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<video autoplay muted loop class="video-background">
+    <source src="~/videos/shoppingcart-bg.mp4" type="video/mp4" />
+</video>
+<div class="video-overlay"></div>
+
+<div class="container py-5 position-relative" style="z-index: 1;">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+
+            <div class="card shadow" style="border-radius: 0.5rem;">
+
+                <div class="card-header text-white"
+                     style="background-color: #000080; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
+                    <h3 class="my-2">
+                        <i class="bi bi-cart"></i> Your Shopping Cart
+                    </h3>
+                </div>
+
+                <div class="card-body bg-light">
+                    @if (!Model.ShoppingCartList.Any())
+                    {
+                        <div class="alert alert-info text-center mb-0">
+                            Your cart is empty. <a asp-controller="TiffanyLamp" asp-action="Index" class="text-decoration-none fw-bold">Browse lamps</a> to add some!
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle text-center mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Lamp</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Subtotal</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ShoppingCartList)
+                                    {
+                                        <tr>
+                                            <td style="width: 100px;">
+                                                <img src="@item.TiffanyLamp.Picture"
+                                                     alt="@item.TiffanyLamp.TiffanyLampName"
+                                                     class="img-fluid rounded shadow-sm" />
+                                            </td>
+                                            <td>@item.TiffanyLamp.TiffanyLampName</td>
+                                            <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                                            <td>@item.Count</td>
+                                            <td>@((item.Price * item.Count).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US")))</td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a asp-action="Plus" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-plus-circle"></i>
+                                                    </a>
+                                                    <a asp-action="Minus" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">
+                                                        <i class="bi bi-dash-circle"></i>
+                                                    </a>
+                                                    <a asp-action="Remove" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+
+                @if (Model.ShoppingCartList.Any())
+                {
+                    <div class="card-footer bg-white">
+                        <div class="row">
+                            <div class="col-md-8 d-flex flex-column flex-md-row align-items-md-center gap-2">
+                                <h4 class="mb-0 me-md-3">
+                                    Total: <strong>@Model.CartTotal.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</strong>
+                                </h4>
+                                <a asp-controller="TiffanyLamp" asp-action="Index" class="btn btn-outline-primary">
+                                    <i class="bi bi-plus-circle"></i> Add More
+                                </a>
+                            </div>
+
+                            <div class="col-md-4 text-end">
+                                <form method="post" asp-controller="Order" asp-action="CreateFromCart">
+                                    <button type="submit" class="btn btn-success w-100">
+                                        Order Now
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

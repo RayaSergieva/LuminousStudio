@@ -1,0 +1,50 @@
+﻿@model IEnumerable<LuminousStudio.Models.Order.OrderIndexVM>
+
+@{
+    ViewData["Title"] = "My Orders";
+    ViewData["BodyClass"] = "orders-background";
+}
+
+<div class="container py-5 mt-5 position-relative">
+    <h1 class="display-4 text-white mb-4">All Orders</h1>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered align-middle bg-light">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.OrderDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.User)</th>
+                    <th>@Html.DisplayNameFor(model => model.TiffanyLamp)</th>
+                    <th>@Html.DisplayNameFor(model => model.Picture)</th>
+                    <th>@Html.DisplayNameFor(model => model.Quantity)</th>
+                    <th>@Html.DisplayNameFor(model => model.Price)</th>
+                    <th>@Html.DisplayNameFor(model => model.Discount)</th>
+                    <th>@Html.DisplayNameFor(model => model.TotalPrice)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.OrderDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.User)</td>
+                        <td>@Html.DisplayFor(modelItem => item.TiffanyLamp)</td>
+                        <td>
+                            <img src="@item.Picture" alt="Image" width="100" />
+                        </td>
+                        <td>@item.Quantity</td>
+                        <td>$@item.Price</td>
+                        <td>
+                            @if (item.Discount > 0)
+                            {
+                                <span class="badge bg-success">@item.Discount.ToString("0.00")%</span>
+                            }
+                        </td>
+                        <td>$@item.TotalPrice</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
