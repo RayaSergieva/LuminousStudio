@@ -4,7 +4,7 @@
     public class ShoppingCartVM
     {
         public IEnumerable<ShoppingCart> ShoppingCartList { get; set; }
-    = new List<ShoppingCart>();
+            = new List<ShoppingCart>();
 
         public decimal CartTotal
         {

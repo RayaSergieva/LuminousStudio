@@ -2,8 +2,18 @@
     ViewData["Title"] = "Denied";
 }
 
-<h1>Insufficient availability</h1>
+<div class="container mt-5">
+    <div class="alert alert-warning text-center shadow-sm">
+        <h2>Insufficient availability</h2>
+        <p>The selected quantity is not available at the moment.</p>
+    </div>
 
-<div>
-    <a asp-controller="TiffanyLamp" asp-action="Index">Back to list of Tiffany Lamps</a>
+    <div class="d-flex justify-content-center gap-3 mt-4">
+        <a asp-controller="TiffanyLamp" asp-action="Index" class="btn btn-primary">
+            Back to Tiffany Lamps
+        </a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+            Home
+        </a>
+    </div>
 </div>

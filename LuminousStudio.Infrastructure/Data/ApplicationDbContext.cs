@@ -9,7 +9,6 @@ namespace LuminousStudio.Infrastructure.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            this.Database.EnsureCreated();
         }
 
         public DbSet<Manufacturer> Manufacturers { get; set; }

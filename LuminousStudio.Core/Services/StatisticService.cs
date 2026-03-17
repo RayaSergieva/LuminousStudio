@@ -1,5 +1,6 @@
 ﻿using LuminousStudio.Core.Contracts;
 using LuminousStudio.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace LuminousStudio.Core.Services
 {
@@ -14,7 +15,18 @@ namespace LuminousStudio.Core.Services
 
         public int CountClients()
         {
-            return _context.Users.Count() - 1;
+            var adminUserIds = _context.UserRoles
+                .Join(
+                    _context.Roles,
+                    userRole => userRole.RoleId,
+                    role => role.Id,
+                    (userRole, role) => new { userRole.UserId, role.Name })
+                .Where(x => x.Name == "Administrator")
+                .Select(x => x.UserId)
+                .Distinct()
+                .ToList();
+
+            return _context.Users.Count(u => !adminUserIds.Contains(u.Id));
         }
 
         public int CountOrders()
@@ -29,9 +41,8 @@ namespace LuminousStudio.Core.Services
 
         public decimal SumOrders()
         {
-            var suma = _context.Orders.Sum(x => x.Quantity * x.Price - x.Quantity * x.Price * x.Discount / 100);
-
-            return suma;
+            return _context.Orders
+                .Sum(x => x.Quantity * x.Price - x.Quantity * x.Price * x.Discount / 100);
         }
     }
 }

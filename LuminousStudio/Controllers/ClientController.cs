@@ -1,11 +1,13 @@
 ﻿using LuminousStudio.Infrastructure.Data;
 using LuminousStudio.Infrastructure.Data.Entities;
 using LuminousStudio.Models.Client;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LuminousStudio.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class ClientController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

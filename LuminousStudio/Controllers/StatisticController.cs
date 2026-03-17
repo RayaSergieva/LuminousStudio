@@ -1,9 +1,11 @@
 ﻿using LuminousStudio.Core.Contracts;
 using LuminousStudio.Models.Statistic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LuminousStudio.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class StatisticController : Controller
     {
         private readonly IStatisticService statisticsService;

@@ -1,80 +1,84 @@
-﻿@model IEnumerable<LuminousStudio.Models.TiffanyLamp.TiffanyLampIndexVM>
+﻿@model LuminousStudio.Models.TiffanyLamp.TiffanyLampEditVM
 
 @{
-    ViewData["Title"] = "Tiffany Lamps";
+    ViewData["Title"] = "Edit";
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-<link rel="stylesheet" href="~/css/tiffanylamps.css" />
-
-<div class="container py-5 mt-5 position-relative" style="z-index: 1;">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-5 text-white">Tiffany Lamps</h1>
-        @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
-        {
-            <a asp-action="Create" class="btn btn-primary">+ Create New</a>
-        }
-    </div>
-
-    <form asp-controller="TiffanyLamp" asp-action="Index" method="get" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <input type="text" name="SearchStringManufacturerName" class="form-control" placeholder="Search by Manufacturer" />
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-pencil-square"></i> Edit Tiffany Lamp</h3>
         </div>
-        <div class="col-md-4">
-            <input type="text" name="SearchStringLampStyleName" class="form-control" placeholder="Search by Lamp Style" />
-        </div>
-        <div class="col-md-4 d-grid">
-            <input type="submit" value="Filter" class="btn btn-outline-light" />
-        </div>
-    </form>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach (var item in Model)
-        {
-            <div class="col">
-                <div class="card h-100 shadow-sm tiffany-card">
-                    <img src="@item.Picture" class="card-img-top" alt="@item.TiffanyLampName" style="height: 300px; object-fit: cover;">
-                    <div class="lamp-name-box text-center">
-                        @item.TiffanyLampName
-                    </div>
+                <input type="hidden" asp-for="Id" />
 
-                    <div class="card-body">
-                        <p class="card-text mb-1">
-                            <strong>Manufacturer:</strong> @item.ManufacturerName<br />
-                            <strong>Style:</strong> @item.LampStyleName<br />
-                            <strong>Price:</strong> $@item.Price<br />
-                            <strong>Quantity:</strong> @item.Quantity
-                        </p>
-                        @if (item.Discount > 0)
-                        {
-                            <span class="badge bg-success">Discount: @item.Discount.ToString("0.00")%</span>
-                        }
-                    </div>
-                    <div class="card-footer border-top-0 bg-transparent">
-                        <div class="d-flex flex-wrap gap-2">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success btn-sm">Details</a>
-
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <a asp-action="Add" asp-controller="ShoppingCart" asp-route-tiffanyLampId="@item.Id" class="btn btn-warning btn-sm d-flex align-items-center gap-1">
-                                    Add to Cart
-                                    <i class="bi bi-cart-fill"></i>
-                                </a>
-                            }
-
-                            @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
-                            {
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">Edit</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm">Delete</a>
-                            }
-                        </div>
-                    </div>
+                <div class="mb-3">
+                    <label asp-for="TiffanyLampName" class="form-label"></label>
+                    <input asp-for="TiffanyLampName" class="form-control" />
+                    <span asp-validation-for="TiffanyLampName" class="text-danger small"></span>
                 </div>
-            </div>
-        }
+
+                <div class="mb-3">
+                    <label asp-for="ManufacturerId" class="form-label"></label>
+                    <select asp-for="ManufacturerId" class="form-select">
+                        @foreach (var manufacturer in Model.Manufacturers)
+                        {
+                            <option value="@manufacturer.Id">@manufacturer.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ManufacturerId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LampStyleId" class="form-label"></label>
+                    <select asp-for="LampStyleId" class="form-select">
+                        @foreach (var lampStyle in Model.LampStyles)
+                        {
+                            <option value="@lampStyle.Id">@lampStyle.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="LampStyleId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Picture" class="form-label"></label>
+                    <input asp-for="Picture" class="form-control" type="url" />
+                    <span asp-validation-for="Picture" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Quantity" class="form-label"></label>
+                    <input asp-for="Quantity" class="form-control" type="number" min="0" max="5000" />
+                    <span asp-validation-for="Quantity" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label"></label>
+                    <input asp-for="Price" class="form-control" type="number" min="0.01" step="0.01" />
+                    <span asp-validation-for="Price" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Discount" class="form-label"></label>
+                    <input asp-for="Discount" class="form-control" type="number" min="0" max="100" step="0.01" />
+                    <span asp-validation-for="Discount" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Save Changes
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left-circle"></i> Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-
 
 @section Scripts {
     @{

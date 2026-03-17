@@ -67,17 +67,36 @@ namespace LuminousStudio.Controllers
         {
             if (ModelState.IsValid)
             {
-                var createdId = _tiffanyLampService.Create(tiffanyLamp.TiffanyLampName, tiffanyLamp.ManufacturerId,
-                    tiffanyLamp.LampStyleId, tiffanyLamp.Picture,
-                    tiffanyLamp.Quantity, tiffanyLamp.Price, tiffanyLamp.Discount);
+                var created = _tiffanyLampService.Create(
+                    tiffanyLamp.TiffanyLampName,
+                    tiffanyLamp.ManufacturerId,
+                    tiffanyLamp.LampStyleId,
+                    tiffanyLamp.Picture,
+                    tiffanyLamp.Quantity,
+                    tiffanyLamp.Price,
+                    tiffanyLamp.Discount);
 
-                if (createdId)
+                if (created)
                 {
                     return RedirectToAction(nameof(Index));
                 }
             }
 
-            return View();
+            tiffanyLamp.Manufacturers = _manufacturerService.GetManufacturers()
+                .Select(x => new ManufacturerPairVM
+                {
+                    Id = x.Id,
+                    Name = x.ManufacturerName
+                }).ToList();
+
+            tiffanyLamp.LampStyles = _lampStyleService.GetLampStyles()
+                .Select(x => new LampStylePairVM
+                {
+                    Id = x.Id,
+                    Name = x.LampStyleName
+                }).ToList();
+
+            return View(tiffanyLamp);
         }
 
         public ActionResult Edit(int id)
@@ -123,14 +142,36 @@ namespace LuminousStudio.Controllers
         {
             if (ModelState.IsValid)
             {
-                var updated = _tiffanyLampService.Update(id, tiffanyLamp.TiffanyLampName, tiffanyLamp.ManufacturerId,
-                    tiffanyLamp.LampStyleId, tiffanyLamp.Picture, tiffanyLamp.Quantity, tiffanyLamp.Price, tiffanyLamp.Discount);
+                var updated = _tiffanyLampService.Update(
+                    id,
+                    tiffanyLamp.TiffanyLampName,
+                    tiffanyLamp.ManufacturerId,
+                    tiffanyLamp.LampStyleId,
+                    tiffanyLamp.Picture,
+                    tiffanyLamp.Quantity,
+                    tiffanyLamp.Price,
+                    tiffanyLamp.Discount);
 
                 if (updated)
                 {
-                    return this.RedirectToAction("Index");
+                    return RedirectToAction("Index");
                 }
             }
+
+            tiffanyLamp.Manufacturers = _manufacturerService.GetManufacturers()
+                .Select(x => new ManufacturerPairVM
+                {
+                    Id = x.Id,
+                    Name = x.ManufacturerName
+                }).ToList();
+
+            tiffanyLamp.LampStyles = _lampStyleService.GetLampStyles()
+                .Select(x => new LampStylePairVM
+                {
+                    Id = x.Id,
+                    Name = x.LampStyleName
+                }).ToList();
+
             return View(tiffanyLamp);
         }
 

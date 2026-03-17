@@ -10,7 +10,7 @@ namespace LuminousStudio.Core.Contracts
 
         List<Order> GetOrdersByUser(string userId);
 
-        Order GetOrderById(int orderId);
+        Order? GetOrderById(int orderId);
 
         bool RemoveById(int orderId);
 
