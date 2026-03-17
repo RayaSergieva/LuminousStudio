@@ -1,4 +1,12 @@
-﻿.card.tiffany-card {
+﻿.tiffanylamps-page {
+    background-image: url('/images/tiffanylamps-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.card.tiffany-card {
     background-color: #ADD8E6;
     color: #000;
     border: none;
@@ -44,26 +52,6 @@ input[name="SearchStringLampStyleName"] {
 
 .display-5 {
     font-weight: bold;
-}
-
-.video-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    min-width: 100%;
-    min-height: 100%;
-    object-fit: cover;
-    z-index: -1;
-}
-
-.video-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3 );
-    z-index: 0;
 }
 
 .btn-primary {

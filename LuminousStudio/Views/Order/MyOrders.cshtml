@@ -2,6 +2,11 @@
 
 @{
     ViewData["Title"] = "My Orders";
+    ViewData["BodyClass"] = "orders-page";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/orders.css" asp-append-version="true" />
 }
 
 <h1 class="fw-bold text-white mb-4">All Orders</h1>

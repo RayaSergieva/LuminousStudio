@@ -28,26 +28,6 @@ img.img-thumbnail {
     width: 100px;
 }
 
-.video-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    min-width: 100%;
-    min-height: 100%;
-    object-fit: cover;
-    z-index: -1;
-}
-
-.video-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 0;
-}
-
 .dropdown-menu {
     background-color: #001f3f;
 }
