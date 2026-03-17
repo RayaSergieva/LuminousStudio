@@ -1,0 +1,77 @@
+﻿.card.tiffany-card {
+    background-color: #ADD8E6;
+    color: #000;
+    border: none;
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .card.tiffany-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .card.tiffany-card img.card-img-top {
+        height: 250px;
+        object-fit: cover;
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+    }
+
+.lamp-name-box {
+    background-color: #000080;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    border-radius: 0;
+    text-align: center;
+}
+
+input[name="SearchStringManufacturerName"],
+input[name="SearchStringLampStyleName"] {
+    background-color: #ADD8E6;
+    color: #000;
+    border: 1px solid #87CEEB;
+    font-weight: 500;
+}
+
+    input[name="SearchStringManufacturerName"]::placeholder,
+    input[name="SearchStringLampStyleName"]::placeholder {
+        color: #000080;
+        font-weight: bold;
+    }
+
+.display-5 {
+    font-weight: bold;
+}
+
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3 );
+    z-index: 0;
+}
+
+.btn-primary {
+    background-color: #000080;
+    border-color: #000080;
+}
+
+    .btn-primary:hover {
+        background-color: #0000a0;
+        border-color: #0000a0;
+    }
