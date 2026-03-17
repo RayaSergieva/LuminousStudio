@@ -1,4 +1,7 @@
+using LuminousStudio.Core.Contracts;
+using LuminousStudio.Core.Services;
 using LuminousStudio.Infrastructure.Data;
+using LuminousStudio.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +13,26 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 5;
+})
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddTransient<ILampStyleService, LampStyleService>();
+builder.Services.AddTransient<IManufacturerService, ManufacturerService>();
+builder.Services.AddTransient<ITiffanyLampService, TiffanyLampService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IStatisticService, StatisticService>();
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 
 var app = builder.Build();
 

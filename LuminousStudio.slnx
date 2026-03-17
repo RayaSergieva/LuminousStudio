@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="LuminousStudio.Core/LuminousStudio.Core.csproj" Id="65453b27-b716-42aa-9e90-45186977f709" />
   <Project Path="LuminousStudio.Infrastructure/LuminousStudio.Infrastructure.csproj" Id="465626a2-7d75-4666-bfdd-0e023aface0d" />
   <Project Path="LuminousStudio/LuminousStudio.csproj" />
 </Solution>
