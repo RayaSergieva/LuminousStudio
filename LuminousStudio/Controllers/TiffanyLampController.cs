@@ -22,7 +22,6 @@ namespace LuminousStudio.Controllers
             this._manufacturerService = manufacturerService;
         }
 
-        // GET: TiffanyLampController
         [AllowAnonymous]
         public ActionResult Index(string searchStringLampStyleName, string searchStringManufacturerName)
         {
@@ -42,7 +41,6 @@ namespace LuminousStudio.Controllers
             return this.View(tiffanyLamps);
         }
 
-        // GET: TiffanyLampController/Create
         public ActionResult Create()
         {
             var tiffanyLamp = new TiffanyLampCreateVM();
@@ -63,7 +61,6 @@ namespace LuminousStudio.Controllers
             return View(tiffanyLamp);
         }
 
-        // POST: TiffanyLampController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([FromForm] TiffanyLampCreateVM tiffanyLamp)
@@ -83,7 +80,6 @@ namespace LuminousStudio.Controllers
             return View();
         }
 
-        // GET: TiffanyLampController/Edit/5
         public ActionResult Edit(int id)
         {
             TiffanyLamp tiffanyLamp = _tiffanyLampService.GetTiffanyLampById(id);
@@ -97,9 +93,7 @@ namespace LuminousStudio.Controllers
                 Id = tiffanyLamp.Id,
                 TiffanyLampName = tiffanyLamp.TiffanyLampName,
                 ManufacturerId = tiffanyLamp.ManufacturerId,
-                // ManufacturerName = tiffanyLamp.Manufacturer.ManufacturerName, // Uncomment if needed
-                LampStyleId = tiffanyLamp.LampStyleId,
-                // LampStyleName = tiffanyLamp.LampStyle.LampStyleName, // Uncomment if needed
+                LampStyleId = tiffanyLamp.LampStyleId,  
                 Picture = tiffanyLamp.Picture,
                 Quantity = tiffanyLamp.Quantity,
                 Price = tiffanyLamp.Price,
@@ -123,7 +117,6 @@ namespace LuminousStudio.Controllers
             return View(updatedTiffanyLamp);
         }
 
-        // POST: TiffanyLampController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, TiffanyLampEditVM tiffanyLamp)
@@ -141,7 +134,6 @@ namespace LuminousStudio.Controllers
             return View(tiffanyLamp);
         }
 
-        // GET: TiffanyLampController/Details/5
         [AllowAnonymous]
         public ActionResult Details(int id)
         {
@@ -168,7 +160,6 @@ namespace LuminousStudio.Controllers
             return View(tiffanyLamp);
         }
 
-        // GET: TiffanyLampController/Delete/5
         public ActionResult Delete(int id)
         {
             TiffanyLamp item = _tiffanyLampService.GetTiffanyLampById(id);
@@ -194,7 +185,6 @@ namespace LuminousStudio.Controllers
             return View(tiffanyLamp);
         }
 
-        // POST: TiffanyLampController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

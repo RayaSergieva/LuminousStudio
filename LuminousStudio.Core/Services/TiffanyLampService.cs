@@ -1,6 +1,7 @@
 ﻿using LuminousStudio.Core.Contracts;
 using LuminousStudio.Infrastructure.Data;
 using LuminousStudio.Infrastructure.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LuminousStudio.Core.Services
 {
@@ -32,34 +33,44 @@ namespace LuminousStudio.Core.Services
 
         public TiffanyLamp GetTiffanyLampById(int tiffanyLampId)
         {
-            return _context.TiffanyLamps.Find(tiffanyLampId);
+            return _context.TiffanyLamps
+                .Include(x => x.Manufacturer)
+                .Include(x => x.LampStyle)
+                .FirstOrDefault(x => x.Id == tiffanyLampId);
         }
 
         public List<TiffanyLamp> GetTiffanyLamps()
         {
-            List<TiffanyLamp> tiffanyLamps = _context.TiffanyLamps.ToList();
-            return tiffanyLamps;
+            return _context.TiffanyLamps
+                .Include(x => x.Manufacturer)
+                .Include(x => x.LampStyle)
+                .ToList();
         }
 
         public List<TiffanyLamp> GetTiffanyLamps(string searchStringLampStyleName, string searchStringManufacturerName)
         {
-            List<TiffanyLamp> tiffanyLamps = _context.TiffanyLamps.ToList();
+            IQueryable<TiffanyLamp> query = _context.TiffanyLamps
+                .Include(x => x.Manufacturer)
+                .Include(x => x.LampStyle);
 
-            if (!String.IsNullOrEmpty(searchStringLampStyleName) && !String.IsNullOrEmpty(searchStringManufacturerName))
+            if (!string.IsNullOrEmpty(searchStringLampStyleName) && !string.IsNullOrEmpty(searchStringManufacturerName))
             {
-                tiffanyLamps = tiffanyLamps.Where(x => x.LampStyle.LampStyleName.ToLower().Contains(searchStringLampStyleName.ToLower())
-                                            && x.Manufacturer.ManufacturerName.ToLower().Contains(searchStringManufacturerName.ToLower())).ToList();
+                query = query.Where(x =>
+                    x.LampStyle.LampStyleName.ToLower().Contains(searchStringLampStyleName.ToLower()) &&
+                    x.Manufacturer.ManufacturerName.ToLower().Contains(searchStringManufacturerName.ToLower()));
             }
-            else if (!String.IsNullOrEmpty(searchStringLampStyleName))
+            else if (!string.IsNullOrEmpty(searchStringLampStyleName))
             {
-                tiffanyLamps = tiffanyLamps.Where(x => x.LampStyle.LampStyleName.ToLower().Contains(searchStringLampStyleName.ToLower())).ToList();
+                query = query.Where(x =>
+                    x.LampStyle.LampStyleName.ToLower().Contains(searchStringLampStyleName.ToLower()));
             }
-            else if (!String.IsNullOrEmpty(searchStringManufacturerName))
+            else if (!string.IsNullOrEmpty(searchStringManufacturerName))
             {
-                tiffanyLamps = tiffanyLamps.Where(x => x.Manufacturer.ManufacturerName.ToLower().Contains(searchStringManufacturerName.ToLower())).ToList();
+                query = query.Where(x =>
+                    x.Manufacturer.ManufacturerName.ToLower().Contains(searchStringManufacturerName.ToLower()));
             }
 
-            return tiffanyLamps;
+            return query.ToList();
         }
 
         public bool RemoveById(int tiffanyLampId)

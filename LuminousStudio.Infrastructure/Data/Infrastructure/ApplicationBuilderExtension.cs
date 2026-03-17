@@ -61,7 +61,7 @@ namespace LuminousStudio.Infrastructure.Data.Infrastructure
 
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(user, "Administrator").Wait();
+                    await userManager.AddToRoleAsync(user, "Administrator");
                 }
             }
         }

@@ -17,7 +17,6 @@ namespace LuminousStudio.Controllers
             this._context = context;
         }
 
-        // GET: ClientController
         public async Task<IActionResult> Index()
         {
             var allUsers = this._userManager.Users
@@ -46,7 +45,6 @@ namespace LuminousStudio.Controllers
             return this.View(users);
         }
 
-        // GET: ClientController/Delete/5
         public ActionResult Delete(string id)
         {
             var user = this._userManager.Users.FirstOrDefault(x => x.Id == id);

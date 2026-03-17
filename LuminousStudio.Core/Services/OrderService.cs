@@ -1,6 +1,7 @@
 ﻿using LuminousStudio.Core.Contracts;
 using LuminousStudio.Infrastructure.Data;
 using LuminousStudio.Infrastructure.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LuminousStudio.Core.Services
 {
@@ -49,12 +50,19 @@ namespace LuminousStudio.Core.Services
 
         public List<Order> GetOrders()
         {
-            return _context.Orders.OrderByDescending(x => x.OrderDate).ToList();
+            return _context.Orders
+                .Include(x => x.User)
+                .Include(x => x.TiffanyLamp)
+                .OrderByDescending(x => x.OrderDate)
+                .ToList();
         }
 
         public List<Order> GetOrdersByUser(string userId)
         {
-            return _context.Orders.Where(x => x.UserId == userId)
+            return _context.Orders
+                .Include(x => x.User)
+                .Include(x => x.TiffanyLamp)
+                .Where(x => x.UserId == userId)
                 .OrderByDescending(x => x.OrderDate)
                 .ToList();
         }
