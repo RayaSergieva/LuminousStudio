@@ -1,24 +1,35 @@
-﻿using LuminousStudio.Infrastructure.Data.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-
-namespace LuminousStudio.Infrastructure.Data
+﻿namespace LuminousStudio.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    using System.Reflection;
+
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
+
+    using LuminousStudio.Infrastructure.Data.Entities;
+
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Manufacturer> Manufacturers { get; set; }
+        public virtual DbSet<Manufacturer> Manufacturers { get; set; }
 
-        public DbSet<LampStyle> LampStyles { get; set; }
+        public virtual DbSet<LampStyle> LampStyles { get; set; }
 
-        public DbSet<Order> Orders { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
 
-        public DbSet<TiffanyLamp> TiffanyLamps { get; set; }
+        public virtual DbSet<TiffanyLamp> TiffanyLamps { get; set; }
 
-        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
     }
 }
