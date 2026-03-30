@@ -1,17 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace LuminousStudio.Infrastructure.Data.Entities
+﻿namespace LuminousStudio.Infrastructure.Data.Entities
 {
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    using Microsoft.EntityFrameworkCore;
+
     [Comment("Stores shopping cart items for users before they place orders.")]
     public class ShoppingCart
     {
         [Comment("Primary key of the shopping cart item.")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Comment("Foreign key to the selected Tiffany lamp.")]
-        public int TiffanyLampId { get; set; }
+        public Guid TiffanyLampId { get; set; }
 
         [ForeignKey(nameof(TiffanyLampId))]
         [Comment("Navigation property to the Tiffany lamp in the shopping cart.")]
@@ -23,7 +24,7 @@ namespace LuminousStudio.Infrastructure.Data.Entities
 
         [Required]
         [Comment("Foreign key to the user who owns the shopping cart item.")]
-        public string ApplicationUserId { get; set; } = null!;
+        public Guid ApplicationUserId { get; set; }
 
         [ForeignKey(nameof(ApplicationUserId))]
         [Comment("Navigation property to the user who owns the shopping cart item.")]

@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Infrastructure.Data.Entities
+﻿namespace LuminousStudio.Infrastructure.Data.Entities
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using Microsoft.EntityFrameworkCore;
+
     [Comment("Stores the available lamp style categories.")]
     public class LampStyle
     {
         [Comment("Primary key of the lamp style.")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(30)]
@@ -15,6 +16,6 @@ namespace LuminousStudio.Infrastructure.Data.Entities
         public string LampStyleName { get; set; } = null!;
 
         [Comment("Collection of Tiffany lamps that belong to this lamp style.")]
-        public virtual IEnumerable<TiffanyLamp> tiffanyLamps { get; set; } = new List<TiffanyLamp>();
+        public virtual ICollection<TiffanyLamp> TiffanyLamps { get; set; } = new List<TiffanyLamp>();
     }
 }

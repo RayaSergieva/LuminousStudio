@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Infrastructure.Data.Entities
+﻿namespace LuminousStudio.Infrastructure.Data.Entities
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using Microsoft.EntityFrameworkCore;
+
     [Comment("Stores customer orders for Tiffany lamps.")]
     public class Order
     {
         [Comment("Primary key of the order.")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [Comment("The date and time when the order was created.")]
@@ -15,14 +16,14 @@ namespace LuminousStudio.Infrastructure.Data.Entities
 
         [Required]
         [Comment("Foreign key to the ordered Tiffany lamp.")]
-        public int TiffanyLampId { get; set; }
+        public Guid TiffanyLampId { get; set; }
 
         [Comment("Navigation property to the ordered Tiffany lamp.")]
         public virtual TiffanyLamp TiffanyLamp { get; set; } = null!;
 
         [Required]
         [Comment("Foreign key to the user who placed the order.")]
-        public string UserId { get; set; } = null!;
+        public Guid UserId { get; set; }
 
         [Comment("Navigation property to the user who placed the order.")]
         public virtual ApplicationUser User { get; set; } = null!;
@@ -44,7 +45,7 @@ namespace LuminousStudio.Infrastructure.Data.Entities
         {
             get
             {
-                return this.Quantity * this.Price - this.Quantity * this.Price * this.Discount / 100;
+                return Quantity * Price - Quantity * Price * Discount / 100;
             }
         }
     }

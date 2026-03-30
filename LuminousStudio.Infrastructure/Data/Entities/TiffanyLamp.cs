@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Infrastructure.Data.Entities
+﻿namespace LuminousStudio.Infrastructure.Data.Entities
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using Microsoft.EntityFrameworkCore;
+
     [Comment("Stores the main Tiffany lamp products offered in the application.")]
     public class TiffanyLamp
     {
         [Comment("Primary key of the Tiffany lamp.")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(30)]
@@ -16,14 +17,14 @@ namespace LuminousStudio.Infrastructure.Data.Entities
 
         [Required]
         [Comment("Foreign key to the manufacturer of the Tiffany lamp.")]
-        public int ManufacturerId { get; set; }
+        public Guid ManufacturerId { get; set; }
 
         [Comment("Navigation property to the manufacturer of the Tiffany lamp.")]
         public virtual Manufacturer Manufacturer { get; set; } = null!;
 
         [Required]
         [Comment("Foreign key to the lamp style of the Tiffany lamp.")]
-        public int LampStyleId { get; set; }
+        public Guid LampStyleId { get; set; }
 
         [Comment("Navigation property to the lamp style of the Tiffany lamp.")]
         public virtual LampStyle LampStyle { get; set; } = null!;
@@ -45,6 +46,6 @@ namespace LuminousStudio.Infrastructure.Data.Entities
         public decimal Discount { get; set; }
 
         [Comment("Collection of orders associated with this Tiffany lamp.")]
-        public virtual IEnumerable<Order> Orders { get; set; } = new List<Order>();
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

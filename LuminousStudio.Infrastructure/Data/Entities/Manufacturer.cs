@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Infrastructure.Data.Entities
+﻿namespace LuminousStudio.Infrastructure.Data.Entities
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using Microsoft.EntityFrameworkCore;
+
     [Comment("Stores the manufacturers or designers associated with Tiffany lamps.")]
     public class Manufacturer
     {
         [Comment("Primary key of the manufacturer.")]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(30)]
@@ -15,6 +16,6 @@ namespace LuminousStudio.Infrastructure.Data.Entities
         public string ManufacturerName { get; set; } = null!;
 
         [Comment("Collection of Tiffany lamps associated with this manufacturer.")]
-        public virtual IEnumerable<TiffanyLamp> tiffanyLamps { get; set; } = new List<TiffanyLamp>();
+        public virtual ICollection<TiffanyLamp> TiffanyLamps { get; set; } = new List<TiffanyLamp>();
     }
 }
