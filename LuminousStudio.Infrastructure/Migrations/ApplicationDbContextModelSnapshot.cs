@@ -24,8 +24,9 @@ namespace LuminousStudio.Infrastructure.Migrations
 
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.ApplicationUser", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -110,12 +111,10 @@ namespace LuminousStudio.Infrastructure.Migrations
 
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.LampStyle", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Primary key of the lamp style.");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("LampStyleName")
                         .IsRequired()
@@ -133,12 +132,10 @@ namespace LuminousStudio.Infrastructure.Migrations
 
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.Manufacturer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Primary key of the manufacturer.");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ManufacturerName")
                         .IsRequired()
@@ -156,12 +153,10 @@ namespace LuminousStudio.Infrastructure.Migrations
 
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Primary key of the order.");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Discount")
                         .HasColumnType("decimal(18,2)")
@@ -179,13 +174,12 @@ namespace LuminousStudio.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasComment("The quantity of lamps included in the order.");
 
-                    b.Property<int>("TiffanyLampId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("TiffanyLampId")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Foreign key to the ordered Tiffany lamp.");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Foreign key to the user who placed the order.");
 
                     b.HasKey("Id");
@@ -202,16 +196,13 @@ namespace LuminousStudio.Infrastructure.Migrations
 
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.ShoppingCart", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Primary key of the shopping cart item.");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)")
+                    b.Property<Guid>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Foreign key to the user who owns the shopping cart item.");
 
                     b.Property<int>("Count")
@@ -222,8 +213,8 @@ namespace LuminousStudio.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasComment("The current effective unit price of the lamp in the shopping cart.");
 
-                    b.Property<int>("TiffanyLampId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("TiffanyLampId")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Foreign key to the selected Tiffany lamp.");
 
                     b.HasKey("Id");
@@ -240,23 +231,21 @@ namespace LuminousStudio.Infrastructure.Migrations
 
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.TiffanyLamp", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Primary key of the Tiffany lamp.");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Discount")
                         .HasColumnType("decimal(18,2)")
                         .HasComment("The discount percentage applied to the Tiffany lamp.");
 
-                    b.Property<int>("LampStyleId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("LampStyleId")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Foreign key to the lamp style of the Tiffany lamp.");
 
-                    b.Property<int>("ManufacturerId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ManufacturerId")
+                        .HasColumnType("uniqueidentifier")
                         .HasComment("Foreign key to the manufacturer of the Tiffany lamp.");
 
                     b.Property<string>("Picture")
@@ -290,10 +279,11 @@ namespace LuminousStudio.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -317,7 +307,7 @@ namespace LuminousStudio.Infrastructure.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -331,9 +321,8 @@ namespace LuminousStudio.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -342,7 +331,7 @@ namespace LuminousStudio.Infrastructure.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -356,9 +345,8 @@ namespace LuminousStudio.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -367,7 +355,7 @@ namespace LuminousStudio.Infrastructure.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -380,9 +368,8 @@ namespace LuminousStudio.Infrastructure.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -391,13 +378,13 @@ namespace LuminousStudio.Infrastructure.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -406,10 +393,10 @@ namespace LuminousStudio.Infrastructure.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -468,13 +455,13 @@ namespace LuminousStudio.Infrastructure.Migrations
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.TiffanyLamp", b =>
                 {
                     b.HasOne("LuminousStudio.Infrastructure.Data.Entities.LampStyle", "LampStyle")
-                        .WithMany("tiffanyLamps")
+                        .WithMany("TiffanyLamps")
                         .HasForeignKey("LampStyleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LuminousStudio.Infrastructure.Data.Entities.Manufacturer", "Manufacturer")
-                        .WithMany("tiffanyLamps")
+                        .WithMany("TiffanyLamps")
                         .HasForeignKey("ManufacturerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -484,16 +471,16 @@ namespace LuminousStudio.Infrastructure.Migrations
                     b.Navigation("Manufacturer");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.HasOne("LuminousStudio.Infrastructure.Data.Entities.ApplicationUser", null)
                         .WithMany()
@@ -502,7 +489,7 @@ namespace LuminousStudio.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.HasOne("LuminousStudio.Infrastructure.Data.Entities.ApplicationUser", null)
                         .WithMany()
@@ -511,9 +498,9 @@ namespace LuminousStudio.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -526,7 +513,7 @@ namespace LuminousStudio.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("LuminousStudio.Infrastructure.Data.Entities.ApplicationUser", null)
                         .WithMany()
@@ -537,12 +524,12 @@ namespace LuminousStudio.Infrastructure.Migrations
 
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.LampStyle", b =>
                 {
-                    b.Navigation("tiffanyLamps");
+                    b.Navigation("TiffanyLamps");
                 });
 
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.Manufacturer", b =>
                 {
-                    b.Navigation("tiffanyLamps");
+                    b.Navigation("TiffanyLamps");
                 });
 
             modelBuilder.Entity("LuminousStudio.Infrastructure.Data.Entities.TiffanyLamp", b =>
