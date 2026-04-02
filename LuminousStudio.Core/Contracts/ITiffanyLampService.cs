@@ -1,19 +1,19 @@
-﻿using LuminousStudio.Infrastructure.Data.Entities;
-
-namespace LuminousStudio.Core.Contracts
+﻿namespace LuminousStudio.Core.Contracts
 {
+    using LuminousStudio.Infrastructure.Data.Entities;
+
     public interface ITiffanyLampService
     {
-        bool Create(string name, int manufactorerId, int lampStyleId, string picture, int quantity, decimal price, decimal discount);
+        Task<bool> CreateAsync(string name, Guid manufactorerId, Guid lampStyleId, string picture, int quantity, decimal price, decimal discount);
 
-        bool Update(int tiffanyLampId, string name, int manufactorerId, int lampStyleId, string picture, int quantity, decimal price, decimal discount);
+        Task<bool> UpdateAsync(Guid tiffanyLampId, string name, Guid manufactorerId, Guid lampStyleId, string picture, int quantity, decimal price, decimal discount);
 
-        List<TiffanyLamp> GetTiffanyLamps();
+        Task<List<TiffanyLamp>> GetTiffanyLampsAsync();
 
-        TiffanyLamp GetTiffanyLampById(int tiffanyLampId);
+        Task<TiffanyLamp?> GetTiffanyLampByIdAsync(Guid tiffanyLampId);
 
-        bool RemoveById(int tiffanyLampId);
+        Task<bool> RemoveByIdAsync(Guid tiffanyLampId);
 
-        List<TiffanyLamp> GetTiffanyLamps(string searchStringLampStyleName, string searchStringManufactorerName);
+        Task<List<TiffanyLamp>> GetTiffanyLampsAsync(string searchStringLampStyleName, string searchStringManufactorerName);
     }
 }
