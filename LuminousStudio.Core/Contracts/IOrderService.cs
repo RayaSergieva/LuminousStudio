@@ -1,19 +1,21 @@
-﻿using LuminousStudio.Infrastructure.Data.Entities;
-
-namespace LuminousStudio.Core.Contracts
+﻿namespace LuminousStudio.Core.Contracts
 {
+    using LuminousStudio.Infrastructure.Data.Entities;
+
     public interface IOrderService
     {
-        bool Create(int tiffanyLampId, string userId, int quantity);
+        Task<bool> CreateAsync(Guid tiffanyLampId, Guid userId, int quantity);
 
-        List<Order> GetOrders();
+        Task<List<Order>> GetOrdersAsync();
 
-        List<Order> GetOrdersByUser(string userId);
+        Task<List<Order>> GetOrdersByUserAsync(Guid userId);
 
-        Order? GetOrderById(int orderId);
+        Task<Order?> GetOrderByIdAsync(Guid orderId);
 
-        bool RemoveById(int orderId);
+        Task<bool> RemoveByIdAsync(Guid orderId);
 
-        bool Update(int orderId, int tiffanyLampId, string userId, int quantity);
+        Task<bool> UpdateAsync(Guid orderId, Guid tiffanyLampId, Guid userId, int quantity);
+
+        Task<bool> UserHasOrdersAsync(Guid userId);
     }
 }
