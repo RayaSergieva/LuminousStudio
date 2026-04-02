@@ -1,10 +1,11 @@
 ﻿namespace LuminousStudio.Core.Contracts
 {
     using LuminousStudio.Infrastructure.Data.Entities;
+
     public interface ILampStyleService
     {
-        List<LampStyle> GetLampStyles();
-        LampStyle GetLampStyleById(int lampStyleId);
-        List<TiffanyLamp> GetProductsByLampStyle(int lampStyleId);
+        Task<List<LampStyle>> GetLampStylesAsync();
+        Task<LampStyle?> GetLampStyleByIdAsync(Guid lampStyleId);
+        Task<List<TiffanyLamp>> GetProductsByLampStyleAsync(Guid lampStyleId);
     }
 }
