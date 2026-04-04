@@ -1,10 +1,11 @@
-﻿using LuminousStudio.Infrastructure.Data.Entities;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace LuminousStudio.Infrastructure.Data.Infrastructure
+﻿namespace LuminousStudio.Infrastructure.Data.Infrastructure
 {
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.DependencyInjection;
+
+    using LuminousStudio.Infrastructure.Data.Entities;
+
     public static class ApplicationBuilderExtension
     {
         public static async Task<IApplicationBuilder> PrepareDatabase(this IApplicationBuilder app)
@@ -15,18 +16,16 @@ namespace LuminousStudio.Infrastructure.Data.Infrastructure
             await RoleSeeder(services);
             await SeedAdministrator(services);
 
-            var dataLampStyle = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            SeedLampStyles(dataLampStyle);
-
-            var dataManufacturer = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            SeedManufacturers(dataManufacturer);
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            SeedLampStyles(dbContext);
+            SeedManufacturers(dbContext);
 
             return app;
         }
 
         private static async Task RoleSeeder(IServiceProvider serviceProvider)
         {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
             string[] roleNames = { "Administrator", "Client" };
             IdentityResult roleResult;
 
@@ -36,7 +35,7 @@ namespace LuminousStudio.Infrastructure.Data.Infrastructure
 
                 if (!roleExist)
                 {
-                    roleResult = await roleManager.CreateAsync(new IdentityRole(role));
+                    roleResult = await roleManager.CreateAsync(new IdentityRole<Guid> { Name = role });
                 }
             }
         }
