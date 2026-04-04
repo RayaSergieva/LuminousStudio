@@ -1,9 +1,9 @@
-﻿using LuminousStudio.Core.Contracts;
-using LuminousStudio.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-
-namespace LuminousStudio.Core.Services
+﻿namespace LuminousStudio.Core.Services
 {
+    using Microsoft.EntityFrameworkCore;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Infrastructure.Data;
     public class StatisticService : IStatisticService
     {
         private readonly ApplicationDbContext _context;
@@ -13,9 +13,9 @@ namespace LuminousStudio.Core.Services
             _context = context;
         }
 
-        public int CountClients()
+        public async Task<int> CountClientsAsync()
         {
-            var adminUserIds = _context.UserRoles
+            var adminUserIds = await _context.UserRoles
                 .Join(
                     _context.Roles,
                     userRole => userRole.RoleId,
@@ -24,25 +24,26 @@ namespace LuminousStudio.Core.Services
                 .Where(x => x.Name == "Administrator")
                 .Select(x => x.UserId)
                 .Distinct()
-                .ToList();
+                .ToListAsync();
 
-            return _context.Users.Count(u => !adminUserIds.Contains(u.Id));
+            return await _context.Users
+                .CountAsync(u => !adminUserIds.Contains(u.Id));
         }
 
-        public int CountOrders()
+        public async Task<int> CountOrdersAsync()
         {
-            return _context.Orders.Count();
+            return await _context.Orders.CountAsync();
         }
 
-        public int CountTiffanyLamps()
+        public async Task<int> CountTiffanyLampsAsync()
         {
-            return _context.TiffanyLamps.Count();
+            return await _context.TiffanyLamps.CountAsync();
         }
 
-        public decimal SumOrders()
+        public async Task<decimal> SumOrdersAsync()
         {
-            return _context.Orders
-                .Sum(x => x.Quantity * x.Price - x.Quantity * x.Price * x.Discount / 100);
+            return await _context.Orders
+                .SumAsync(x => x.Quantity * x.Price - x.Quantity * x.Price * x.Discount / 100);
         }
     }
 }
