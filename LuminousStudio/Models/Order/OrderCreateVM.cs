@@ -1,14 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Models.Order
+﻿namespace LuminousStudio.Models.Order
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class OrderCreateVM
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public DateTime OrderDate { get; set; }
 
-        public int TiffanyLampId { get; set; }
+        public Guid TiffanyLampId { get; set; }
         public string TiffanyLampName { get; set; } = null!;
         public int QuantityInStock { get; set; }
         public string? Picture { get; set; }

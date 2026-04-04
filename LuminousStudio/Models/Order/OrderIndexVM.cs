@@ -2,12 +2,12 @@
 {
     public class OrderIndexVM
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string OrderDate { get; set; } = null!;
-        public string UserId { get; set; } = null!;
+        public Guid UserId { get; set; }
         public string User { get; set; } = null!;
 
-        public int TiffanyLampId { get; set; }
+        public Guid TiffanyLampId { get; set; }
         public string TiffanyLamp { get; set; } = null!;
         public string Picture { get; set; } = null!;
 
