@@ -1,9 +1,11 @@
-﻿using LuminousStudio.Core.Contracts;
-using LuminousStudio.Infrastructure.Data;
-using LuminousStudio.Infrastructure.Data.Entities;
-
-namespace LuminousStudio.Core.Services
+﻿namespace LuminousStudio.Core.Services
 {
+    using Microsoft.EntityFrameworkCore;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Infrastructure.Data;
+    using LuminousStudio.Infrastructure.Data.Entities;
+
     public class LampStyleService : ILampStyleService
     {
         private readonly ApplicationDbContext _context;
@@ -13,22 +15,21 @@ namespace LuminousStudio.Core.Services
             _context = context;
         }
 
-        public LampStyle GetLampStyleById(int lampStyleId)
+        public async Task<LampStyle?> GetLampStyleByIdAsync(Guid lampStyleId)
         {
-            return _context.LampStyles.Find(lampStyleId);
+            return await _context.LampStyles.FindAsync(lampStyleId);
         }
 
-        public List<LampStyle> GetLampStyles()
+        public async Task<List<LampStyle>> GetLampStylesAsync()
         {
-            List<LampStyle> lampStyles = _context.LampStyles.ToList();
-            return lampStyles;
+            return await _context.LampStyles.ToListAsync();
         }
 
-        public List<TiffanyLamp> GetProductsByLampStyle(int lampStyleId)
+        public async Task<List<TiffanyLamp>> GetProductsByLampStyleAsync(Guid lampStyleId)
         {
-            return _context.TiffanyLamps
+            return await _context.TiffanyLamps
                 .Where(x => x.LampStyleId == lampStyleId)
-                .ToList();
+                .ToListAsync();
         }
     }
 }
