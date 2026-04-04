@@ -58,15 +58,24 @@
                                             <td>@((item.Price * item.Count).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US")))</td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a asp-action="Plus" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
-                                                        <i class="bi bi-plus-circle"></i>
-                                                    </a>
-                                                    <a asp-action="Minus" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">
-                                                        <i class="bi bi-dash-circle"></i>
-                                                    </a>
-                                                    <a asp-action="Remove" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
-                                                        <i class="bi bi-trash"></i>
-                                                    </a>
+                                                    <form method="post" asp-action="Plus" asp-route-id="@item.Id">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-plus-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form method="post" asp-action="Minus" asp-route-id="@item.Id">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-outline-warning">
+                                                            <i class="bi bi-dash-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form method="post" asp-action="Remove" asp-route-id="@item.Id">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </td>
                                         </tr>
