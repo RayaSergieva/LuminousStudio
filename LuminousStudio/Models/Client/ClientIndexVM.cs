@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Models.Client
+﻿namespace LuminousStudio.Models.Client
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class ClientIndexVM
     {
-        public string Id { get; set; } = null!;
+        public Guid Id { get; set; }
 
         [Display(Name = "Username")]
         public string UserName { get; set; } = null!;
