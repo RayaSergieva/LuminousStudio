@@ -1,32 +1,31 @@
-﻿using LuminousStudio.Core.Contracts;
-using LuminousStudio.Models.ShoppingCart;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-
-namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Models.ShoppingCart;
+
     [Authorize]
-    public class ShoppingCartController : Controller
+    public class ShoppingCartController : BaseController
     {
         private readonly IShoppingCartService _cartService;
-        private readonly ITiffanyLampService _lampService;
 
-        public ShoppingCartController(IShoppingCartService cartService, ITiffanyLampService lampService)
+        public ShoppingCartController(IShoppingCartService cartService)
         {
             _cartService = cartService;
-            _lampService = lampService;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var items = _cartService.GetCartItems(userId);
-
-            foreach (var item in items)
+            var userId = GetCurrentUserId();
+            if (userId == null)
             {
-                item.Price = item.TiffanyLamp.Price - item.TiffanyLamp.Discount;
+                return Unauthorized();
             }
+
+            var items = (await _cartService.GetCartItemsAsync(userId.Value)).ToList();
 
             var model = new ShoppingCartVM
             {
@@ -36,75 +35,91 @@ namespace LuminousStudio.Controllers
             return View(model);
         }
 
-        public IActionResult Add(int tiffanyLampId)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(Guid tiffanyLampId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var existing = _cartService.GetCartItems(userId)
-                .FirstOrDefault(c => c.TiffanyLampId == tiffanyLampId);
-
-            if (existing != null)
+            var userId = GetCurrentUserId();
+            if (userId == null)
             {
-                existing.Count++;
-                _cartService.Update(existing);
+                return Unauthorized();
+            }
+
+            await _cartService.AddOrUpdateItemAsync(tiffanyLampId, userId.Value);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Plus(Guid id)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var item = await _cartService.GetCartItemByIdAsync(id);
+
+            if (item == null || item.ApplicationUserId != userId.Value)
+            {
+                return NotFound();
+            }
+
+            item.Count++;
+            await _cartService.UpdateAsync(item);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Minus(Guid id)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var item = await _cartService.GetCartItemByIdAsync(id);
+            if (item == null || item.ApplicationUserId != userId.Value)
+            {
+                return NotFound();
+            }
+
+            if (item.Count <= 1)
+            {
+                await _cartService.RemoveAsync(id);
             }
             else
             {
-                var lamp = _lampService.GetTiffanyLampById(tiffanyLampId);
-
-                var cartItem = new Infrastructure.Data.Entities.ShoppingCart
-                {
-                    TiffanyLampId = tiffanyLampId,
-                    Count = 1,
-                    ApplicationUserId = userId,
-                    TiffanyLamp = lamp,
-                    Price = lamp.Price - lamp.Discount
-                };
-                _cartService.Add(cartItem);
+                item.Count--;
+                await _cartService.UpdateAsync(item);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Plus(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Remove(Guid id)
         {
-            var item = _cartService.GetCartItems(User.FindFirstValue(ClaimTypes.NameIdentifier))
-                .FirstOrDefault(c => c.Id == id);
-
-            if (item != null)
+            var userId = GetCurrentUserId();
+            if (userId == null)
             {
-                item.Count++;
-                _cartService.Update(item);
+                return Unauthorized();
             }
 
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Minus(int id)
-        {
-            var item = _cartService.GetCartItems(User.FindFirstValue(ClaimTypes.NameIdentifier))
-                .FirstOrDefault(c => c.Id == id);
-
-            if (item != null)
+            var item = await _cartService.GetCartItemByIdAsync(id);
+            if (item == null || item.ApplicationUserId != userId.Value)
             {
-                if (item.Count <= 1)
-                {
-                    _cartService.Remove(id);
-                }
-                else
-                {
-                    item.Count--;
-                    _cartService.Update(item);
-                }
+                return NotFound();
             }
 
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Remove(int id)
-        {
-            _cartService.Remove(id);
-            return RedirectToAction("Index");
+            await _cartService.RemoveAsync(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
