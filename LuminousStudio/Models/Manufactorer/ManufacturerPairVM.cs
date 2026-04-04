@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Models.Manufactorer
+﻿namespace LuminousStudio.Models.Manufactorer
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class ManufacturerPairVM
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Display(Name = "Manufacturer")]
         public string Name { get; set; } = null!;
