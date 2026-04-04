@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Models.Statistic
+﻿namespace LuminousStudio.Models.Statistic
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class StatisticVM
     {
         [Display(Name = "Count Clients")]
