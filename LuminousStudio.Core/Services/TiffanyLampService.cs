@@ -1,10 +1,11 @@
-﻿using LuminousStudio.Core.Contracts;
-using LuminousStudio.Infrastructure.Data;
-using LuminousStudio.Infrastructure.Data.Entities;
-using Microsoft.EntityFrameworkCore;
-
-namespace LuminousStudio.Core.Services
+﻿namespace LuminousStudio.Core.Services
 {
+    using Microsoft.EntityFrameworkCore;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Infrastructure.Data;
+    using LuminousStudio.Infrastructure.Data.Entities;
+
     public class TiffanyLampService : ITiffanyLampService
     {
         private readonly ApplicationDbContext _context;
@@ -14,13 +15,13 @@ namespace LuminousStudio.Core.Services
             _context = context;
         }
 
-        public bool Create(string name, int manufacturerId, int lampStyleId, string picture, int quantity, decimal price, decimal discount)
+        public async Task<bool> CreateAsync(string name, Guid manufacturerId, Guid lampStyleId, string picture, int quantity, decimal price, decimal discount)
         {
             TiffanyLamp item = new TiffanyLamp
             {
                 TiffanyLampName = name,
-                Manufacturer = _context.Manufacturers.Find(manufacturerId),
-                LampStyle = _context.LampStyles.Find(lampStyleId),
+                ManufacturerId = manufacturerId,
+                LampStyleId = lampStyleId,
                 Picture = picture,
                 Quantity = quantity,
                 Price = price,
@@ -28,26 +29,26 @@ namespace LuminousStudio.Core.Services
             };
 
             _context.TiffanyLamps.Add(item);
-            return _context.SaveChanges() != 0;
+            return await _context.SaveChangesAsync() != 0;
         }
 
-        public TiffanyLamp GetTiffanyLampById(int tiffanyLampId)
+        public async Task<TiffanyLamp?> GetTiffanyLampByIdAsync(Guid tiffanyLampId)
         {
-            return _context.TiffanyLamps
+            return await _context.TiffanyLamps
                 .Include(x => x.Manufacturer)
                 .Include(x => x.LampStyle)
-                .FirstOrDefault(x => x.Id == tiffanyLampId);
+                .FirstOrDefaultAsync(x => x.Id == tiffanyLampId);
         }
 
-        public List<TiffanyLamp> GetTiffanyLamps()
+        public async Task<List<TiffanyLamp>> GetTiffanyLampsAsync()
         {
-            return _context.TiffanyLamps
+            return await _context.TiffanyLamps
                 .Include(x => x.Manufacturer)
                 .Include(x => x.LampStyle)
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<TiffanyLamp> GetTiffanyLamps(string searchStringLampStyleName, string searchStringManufacturerName)
+        public async Task<List<TiffanyLamp>> GetTiffanyLampsAsync(string searchStringLampStyleName, string searchStringManufacturerName)
         {
             IQueryable<TiffanyLamp> query = _context.TiffanyLamps
                 .Include(x => x.Manufacturer)
@@ -56,52 +57,52 @@ namespace LuminousStudio.Core.Services
             if (!string.IsNullOrEmpty(searchStringLampStyleName) && !string.IsNullOrEmpty(searchStringManufacturerName))
             {
                 query = query.Where(x =>
-                    x.LampStyle.LampStyleName.ToLower().Contains(searchStringLampStyleName.ToLower()) &&
-                    x.Manufacturer.ManufacturerName.ToLower().Contains(searchStringManufacturerName.ToLower()));
+                    x.LampStyle.LampStyleName.Contains(searchStringLampStyleName) &&
+                    x.Manufacturer.ManufacturerName.Contains(searchStringManufacturerName));
             }
             else if (!string.IsNullOrEmpty(searchStringLampStyleName))
             {
                 query = query.Where(x =>
-                    x.LampStyle.LampStyleName.ToLower().Contains(searchStringLampStyleName.ToLower()));
+                    x.LampStyle.LampStyleName.Contains(searchStringLampStyleName));
             }
             else if (!string.IsNullOrEmpty(searchStringManufacturerName))
             {
                 query = query.Where(x =>
-                    x.Manufacturer.ManufacturerName.ToLower().Contains(searchStringManufacturerName.ToLower()));
+                    x.Manufacturer.ManufacturerName.Contains(searchStringManufacturerName));
             }
 
-            return query.ToList();
+            return await query.ToListAsync();
         }
 
-        public bool RemoveById(int tiffanyLampId)
+        public async Task<bool> RemoveByIdAsync(Guid tiffanyLampId)
         {
-            var tiffanyLamp = GetTiffanyLampById(tiffanyLampId);
-            if (tiffanyLamp == default(TiffanyLamp))
+            var tiffanyLamp = await GetTiffanyLampByIdAsync(tiffanyLampId);
+            if (tiffanyLamp == null)
             {
                 return false;
             }
             _context.Remove(tiffanyLamp);
-            return _context.SaveChanges() != 0;
+            return await _context.SaveChangesAsync() != 0;
         }
 
-        public bool Update(int tiffanyLampId, string name, int manufacturerId, int lampStyleId, string picture, int quantity, decimal price, decimal discount)
+        public async Task<bool> UpdateAsync(Guid tiffanyLampId, string name, Guid manufacturerId, Guid lampStyleId, string picture, int quantity, decimal price, decimal discount)
         {
-            var tiffanyLamp = GetTiffanyLampById(tiffanyLampId);
-            if (tiffanyLamp == default(TiffanyLamp))
+            var tiffanyLamp = await GetTiffanyLampByIdAsync(tiffanyLampId);
+            if (tiffanyLamp == null)
             {
                 return false;
             }
 
             tiffanyLamp.TiffanyLampName = name;
-            tiffanyLamp.Manufacturer = _context.Manufacturers.Find(manufacturerId);
-            tiffanyLamp.LampStyle = _context.LampStyles.Find(lampStyleId);
+            tiffanyLamp.ManufacturerId = manufacturerId;
+            tiffanyLamp.LampStyleId = lampStyleId;
             tiffanyLamp.Picture = picture;
             tiffanyLamp.Quantity = quantity;
             tiffanyLamp.Price = price;
             tiffanyLamp.Discount = discount;
 
             _context.Update(tiffanyLamp);
-            return _context.SaveChanges() != 0;
+            return await _context.SaveChangesAsync() != 0;
         }
     }
 }
