@@ -1,15 +1,16 @@
-﻿using LuminousStudio.Core.Contracts;
-using LuminousStudio.Infrastructure.Data.Entities;
-using LuminousStudio.Models.Order;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
-using System.Security.Claims;
-
-namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Controllers
 {
+    using System.Globalization;
+
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Infrastructure.Data.Entities;
+    using LuminousStudio.Models.Order;
+
     [Authorize]
-    public class OrderController : Controller
+    public class OrderController : BaseController
     {
         private readonly ITiffanyLampService _tiffanyLampService;
         private readonly IOrderService _orderService;
@@ -25,31 +26,21 @@ namespace LuminousStudio.Controllers
             _shoppingCartService = shoppingCartService;
         }
 
+        [HttpGet]
         [Authorize(Roles = "Administrator")]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            List<OrderIndexVM> orders = _orderService.GetOrders()
-                .Select(x => new OrderIndexVM
-                {
-                    Id = x.Id,
-                    OrderDate = x.OrderDate.ToString("dd-MMM-yyyy hh:mm", CultureInfo.InvariantCulture),
-                    UserId = x.UserId,
-                    User = x.User.UserName,
-                    TiffanyLampId = x.TiffanyLampId,
-                    TiffanyLamp = x.TiffanyLamp.TiffanyLampName,
-                    Picture = x.TiffanyLamp.Picture,
-                    Quantity = x.Quantity,
-                    Price = x.Price,
-                    Discount = x.Discount,
-                    TotalPrice = x.TotalPrice,
-                }).ToList();
+            List<OrderIndexVM> orders = (await _orderService.GetOrdersAsync())
+                .Select(MapToOrderVM)
+                .ToList();
 
             return View(orders);
         }
 
-        public ActionResult Create(int id)
+        [HttpGet]
+        public async Task<ActionResult> Create(Guid id)
         {
-            TiffanyLamp tiffanyLamp = _tiffanyLampService.GetTiffanyLampById(id);
+            TiffanyLamp? tiffanyLamp = await _tiffanyLampService.GetTiffanyLampByIdAsync(id);
             if (tiffanyLamp == null)
             {
                 return NotFound();
@@ -64,72 +55,97 @@ namespace LuminousStudio.Controllers
                 Discount = tiffanyLamp.Discount,
                 Picture = tiffanyLamp.Picture,
             };
+
             return View(order);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(OrderCreateVM bindingModel)
+        public async Task<ActionResult> Create(OrderCreateVM bindingModel)
         {
-            string currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var tiffanyLamp = this._tiffanyLampService.GetTiffanyLampById(bindingModel.TiffanyLampId);
-            if (currentUserId == null || tiffanyLamp == null || tiffanyLamp.Quantity < bindingModel.Quantity || tiffanyLamp.Quantity == 0)
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction("Denied", "Order");
+                return View(bindingModel);
             }
 
-            if (ModelState.IsValid)
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
             {
-                _orderService.Create(bindingModel.TiffanyLampId, currentUserId, bindingModel.Quantity);
-                return this.RedirectToAction("Index", "TiffanyLamp");
+                return Unauthorized();
             }
 
-            return View(bindingModel);
+            TiffanyLamp? tiffanyLamp = await _tiffanyLampService.GetTiffanyLampByIdAsync(bindingModel.TiffanyLampId);
+            if (tiffanyLamp == null || tiffanyLamp.Quantity < bindingModel.Quantity)
+            {
+                return RedirectToAction(nameof(Denied));
+            }
+
+            await _orderService.CreateAsync(bindingModel.TiffanyLampId, currentUserId.Value, bindingModel.Quantity);
+            return RedirectToAction(nameof(Index), "TiffanyLamp");
         }
 
         [HttpPost]
-        public IActionResult CreateFromCart()
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFromCart()
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var cartItems = _shoppingCartService.GetCartItems(userId);
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var cartItems = (await _shoppingCartService.GetCartItemsAsync(userId.Value)).ToList();
+
+            if (!cartItems.Any())
+            {
+                return RedirectToAction(nameof(Index), "ShoppingCart");
+            }
 
             foreach (var cart in cartItems)
             {
-                _orderService.Create(cart.TiffanyLampId, userId, cart.Count);
+                await _orderService.CreateAsync(cart.TiffanyLampId, userId.Value, cart.Count);
             }
 
-            _shoppingCartService.Clear(userId);
+            await _shoppingCartService.ClearAsync(userId.Value);
 
-            return RedirectToAction("MyOrders");
+            return RedirectToAction(nameof(MyOrders));
         }
 
+        [HttpGet]
         public ActionResult Denied()
         {
             return View();
         }
 
-        public ActionResult MyOrders()
+        [HttpGet]
+        public async Task<ActionResult> MyOrders()
         {
-            string currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized();
+            }
 
-            List<OrderIndexVM> orders = _orderService.GetOrdersByUser(currentUserId)
-                .Select(x => new OrderIndexVM
-                {
-                    Id = x.Id,
-                    OrderDate = x.OrderDate.ToString("dd-MMM-yyyy hh:mm", CultureInfo.InvariantCulture),
-                    UserId = x.UserId,
-                    User = x.User.UserName,
-                    TiffanyLampId = x.TiffanyLampId,
-                    TiffanyLamp = x.TiffanyLamp.TiffanyLampName,
-                    Picture = x.TiffanyLamp.Picture,
-                    Quantity = x.Quantity,
-                    Price = x.Price,
-                    Discount = x.Discount,
-                    TotalPrice = x.TotalPrice,
-                }).ToList();
+            List<OrderIndexVM> orders = (await _orderService.GetOrdersByUserAsync(currentUserId.Value))
+                .Select(MapToOrderVM)
+                .ToList();
 
             return View(orders);
         }
+
+        private static OrderIndexVM MapToOrderVM(Order x) => new OrderIndexVM
+        {
+            Id = x.Id,
+            OrderDate = x.OrderDate.ToString("dd-MMM-yyyy hh:mm", CultureInfo.InvariantCulture),
+            UserId = x.UserId,
+            User = x.User.UserName ?? "Unknown",
+            TiffanyLampId = x.TiffanyLampId,
+            TiffanyLamp = x.TiffanyLamp.TiffanyLampName,
+            Picture = x.TiffanyLamp.Picture,
+            Quantity = x.Quantity,
+            Price = x.Price,
+            Discount = x.Discount,
+            TotalPrice = x.TotalPrice,
+        };
     }
 }
