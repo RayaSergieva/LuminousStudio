@@ -1,23 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Models.TiffanyLamp
+﻿namespace LuminousStudio.Models.TiffanyLamp
 {
+    using System.ComponentModel.DataAnnotations;
     public class TiffanyLampIndexVM
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Display(Name = "Tiffany Lamp Name")]
-        public string TiffanyLampName { get; set; }
+        public string TiffanyLampName { get; set; } = null!;
 
         [Display(Name = "Manufacturer")]
-        public string ManufacturerName { get; set; }
+        public string ManufacturerName { get; set; } = null!;
 
         [Display(Name = "Lamp Style")]
-        public string LampStyleName { get; set; }
+        public string LampStyleName { get; set; } = null!;
 
         [Display(Name = "Picture")]
-        public string Picture { get; set; }
+        public string Picture { get; set; } = null!;
 
         [Display(Name = "Quantity")]
         public int Quantity { get; set; }

@@ -1,13 +1,14 @@
-﻿using LuminousStudio.Models.LampStyle;
-using LuminousStudio.Models.Manufactorer;
-using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Models.TiffanyLamp
+﻿namespace LuminousStudio.Models.TiffanyLamp
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using LuminousStudio.Models.LampStyle;
+    using LuminousStudio.Models.Manufactorer;
+
     public class TiffanyLampCreateVM
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(30)]
@@ -16,12 +17,12 @@ namespace LuminousStudio.Models.TiffanyLamp
 
         [Required]
         [Display(Name = "Manufacturer")]
-        public int ManufacturerId { get; set; }
+        public Guid ManufacturerId { get; set; }
         public virtual List<ManufacturerPairVM> Manufacturers { get; set; } = new List<ManufacturerPairVM>();
 
         [Required]
         [Display(Name = "LampStyle")]
-        public int LampStyleId { get; set; }
+        public Guid LampStyleId { get; set; }
         public virtual List<LampStylePairVM> LampStyles { get; set; } = new List<LampStylePairVM>();
 
         [Display(Name = "Picture")]
