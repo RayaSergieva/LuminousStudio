@@ -1,35 +1,38 @@
-﻿using LuminousStudio.Infrastructure.Data;
-using LuminousStudio.Infrastructure.Data.Entities;
-using LuminousStudio.Models.Client;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-
-namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Infrastructure.Data.Entities;
+    using LuminousStudio.Models.Client;
+
     [Authorize(Roles = "Administrator")]
-    public class ClientController : Controller
+    public class ClientController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ApplicationDbContext _context;
+        private readonly IOrderService _orderService;
 
-        public ClientController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        public ClientController(UserManager<ApplicationUser> userManager, IOrderService orderService)
         {
-            this._userManager = userManager;
-            this._context = context;
+            _userManager = userManager;
+            _orderService = orderService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var allUsers = this._userManager.Users
+            var allUsers = _userManager.Users
                 .Select(u => new ClientIndexVM
                 {
                     Id = u.Id,
-                    UserName = u.UserName,
+                    UserName = u.UserName ?? "Unknown",
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     Address = u.Address,
-                    Email = u.Email
+                    Email = u.Email ?? "Unknown"
                 })
                 .ToList();
 
@@ -41,22 +44,21 @@ namespace LuminousStudio.Controllers
                 user.IsAdmin = adminIds.Contains(user.Id);
             }
 
-            var users = allUsers.Where(x => x.IsAdmin == false)
+            var users = allUsers.Where(x => !x.IsAdmin)
                 .OrderBy(x => x.UserName).ToList();
 
-            return this.View(users);
+            return View(users);
         }
 
-        public ActionResult Delete(string id)
+        [HttpGet]
+        public async Task<ActionResult> Delete(Guid id)
         {
-            var user = this._userManager.Users.FirstOrDefault(x => x.Id == id);
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == id);
 
             if (user == null)
             {
                 return NotFound();
             }
-
-
 
             ClientDeleteVM userToDelete = new ClientDeleteVM()
             {
@@ -64,8 +66,8 @@ namespace LuminousStudio.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Address = user.Address,
-                Email = user.Email,
-                UserName = user.UserName
+                Email = user.Email ?? "Unknown",
+                UserName = user.UserName ?? "Unknown"
             };
 
             return View(userToDelete);
@@ -75,15 +77,15 @@ namespace LuminousStudio.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(ClientDeleteVM bidingModel)
         {
-            string id = bidingModel.Id;
-            var user = await _userManager.FindByIdAsync(id);
+            Guid id = bidingModel.Id;
+            var user = await _userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            bool hasOrders = _context.Orders.Any(o => o.UserId == user.Id);
+            bool hasOrders = await _orderService.UserHasOrdersAsync(user.Id);
             if (hasOrders)
             {
                 var model = new ClientDeleteVM
@@ -92,8 +94,8 @@ namespace LuminousStudio.Controllers
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Address = user.Address,
-                    Email = user.Email,
-                    UserName = user.UserName
+                    Email = user.Email ?? "Unknown",
+                    UserName = user.UserName ?? "Unknown"
                 };
 
                 ModelState.Clear();
@@ -106,12 +108,13 @@ namespace LuminousStudio.Controllers
             var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
             {
-                return RedirectToAction("Success");
+                return RedirectToAction(nameof(Success));
             }
 
             return NotFound();
         }
 
+        [HttpGet]
         public IActionResult Success()
         {
             return View();
