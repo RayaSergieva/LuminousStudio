@@ -1,9 +1,11 @@
-﻿using LuminousStudio.Core.Contracts;
-using LuminousStudio.Infrastructure.Data;
-using LuminousStudio.Infrastructure.Data.Entities;
-
-namespace LuminousStudio.Core.Services
+﻿namespace LuminousStudio.Core.Services
 {
+    using Microsoft.EntityFrameworkCore;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Infrastructure.Data;
+    using LuminousStudio.Infrastructure.Data.Entities;
+
     public class ManufacturerService : IManufacturerService
     {
         private readonly ApplicationDbContext _context;
@@ -13,22 +15,21 @@ namespace LuminousStudio.Core.Services
             _context = context;
         }
 
-        public Manufacturer GetManufacturerById(int manufacturerId)
+        public async Task<Manufacturer?> GetManufacturerByIdAsync(Guid manufacturerId)
         {
-            return _context.Manufacturers.Find(manufacturerId);
+            return await _context.Manufacturers.FindAsync(manufacturerId);
         }
 
-        public List<Manufacturer> GetManufacturers()
+        public async Task<List<Manufacturer>> GetManufacturersAsync()
         {
-            List<Manufacturer> manufacturers = _context.Manufacturers.ToList();
-            return manufacturers;
+            return await _context.Manufacturers.ToListAsync();
         }
 
-        public List<TiffanyLamp> GetProductsByManufacturer(int manufacturerId)
+        public async Task<List<TiffanyLamp>> GetProductsByManufacturerAsync(Guid manufacturerId)
         {
-            return _context.TiffanyLamps
+            return await _context.TiffanyLamps
                 .Where(x => x.ManufacturerId == manufacturerId)
-                .ToList();
+                .ToListAsync();
         }
     }
 }
