@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace LuminousStudio.Models.LampStyle
+﻿namespace LuminousStudio.Models.LampStyle
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class LampStylePairVM
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Display(Name = "LampStyle")]
         public string Name { get; set; } = null!;
