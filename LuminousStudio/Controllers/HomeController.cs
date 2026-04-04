@@ -1,28 +1,27 @@
-using System.Diagnostics;
-using LuminousStudio.Models;
-using Microsoft.AspNetCore.Mvc;
-
 namespace LuminousStudio.Controllers
 {
-    public class HomeController : Controller
+    using System.Diagnostics;
+
+    using Microsoft.AspNetCore.Mvc;
+
+    using LuminousStudio.Models;
+
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
+        [HttpGet]
         public IActionResult AboutUs()
         {
             return View();
         }
 
+        [HttpGet]
         public IActionResult Contacts()
         {
             return View();
