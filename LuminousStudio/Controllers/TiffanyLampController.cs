@@ -1,15 +1,16 @@
-﻿using LuminousStudio.Core.Contracts;
-using LuminousStudio.Infrastructure.Data.Entities;
-using LuminousStudio.Models.LampStyle;
-using LuminousStudio.Models.Manufactorer;
-using LuminousStudio.Models.TiffanyLamp;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Infrastructure.Data.Entities;
+    using LuminousStudio.Models.LampStyle;
+    using LuminousStudio.Models.Manufactorer;
+    using LuminousStudio.Models.TiffanyLamp;
+
     [Authorize(Roles = "Administrator")]
-    public class TiffanyLampController : Controller
+    public class TiffanyLampController : BaseController
     {
         private readonly ITiffanyLampService _tiffanyLampService;
         private readonly ILampStyleService _lampStyleService;
@@ -17,15 +18,16 @@ namespace LuminousStudio.Controllers
 
         public TiffanyLampController(ITiffanyLampService tiffanyLampService, ILampStyleService lampStyleService, IManufacturerService manufacturerService)
         {
-            this._tiffanyLampService = tiffanyLampService;
-            this._lampStyleService = lampStyleService;
-            this._manufacturerService = manufacturerService;
+            _tiffanyLampService = tiffanyLampService;
+            _lampStyleService = lampStyleService;
+            _manufacturerService = manufacturerService;
         }
 
+        [HttpGet]
         [AllowAnonymous]
-        public ActionResult Index(string searchStringLampStyleName, string searchStringManufacturerName)
+        public async Task<ActionResult> Index(string searchStringLampStyleName, string searchStringManufacturerName)
         {
-            List<TiffanyLampIndexVM> tiffanyLamps = _tiffanyLampService.GetTiffanyLamps(searchStringLampStyleName, searchStringManufacturerName)
+            List<TiffanyLampIndexVM> tiffanyLamps = (await _tiffanyLampService.GetTiffanyLampsAsync(searchStringLampStyleName, searchStringManufacturerName))
                 .Select(tiffanyLamp => new TiffanyLampIndexVM
                 {
                     Id = tiffanyLamp.Id,
@@ -38,20 +40,21 @@ namespace LuminousStudio.Controllers
                     Discount = tiffanyLamp.Discount
                 }).ToList();
 
-            return this.View(tiffanyLamps);
+            return View(tiffanyLamps);
         }
 
-        public ActionResult Create()
+        [HttpGet]
+        public async Task<ActionResult> Create()
         {
             var tiffanyLamp = new TiffanyLampCreateVM();
-            tiffanyLamp.Manufacturers = _manufacturerService.GetManufacturers()
+            tiffanyLamp.Manufacturers = (await _manufacturerService.GetManufacturersAsync())
                 .Select(x => new ManufacturerPairVM()
                 {
                     Id = x.Id,
                     Name = x.ManufacturerName
                 }).ToList();
 
-            tiffanyLamp.LampStyles = _lampStyleService.GetLampStyles()
+            tiffanyLamp.LampStyles = (await _lampStyleService.GetLampStylesAsync())
                 .Select(x => new LampStylePairVM()
                 {
                     Id = x.Id,
@@ -63,33 +66,33 @@ namespace LuminousStudio.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([FromForm] TiffanyLampCreateVM tiffanyLamp)
+        public async Task<ActionResult> Create([FromForm] TiffanyLampCreateVM tiffanyLamp)
         {
             if (ModelState.IsValid)
             {
-                var created = _tiffanyLampService.Create(
-                    tiffanyLamp.TiffanyLampName,
+                var createdId = await _tiffanyLampService.CreateAsync(
+                    tiffanyLamp.TiffanyLampName, 
                     tiffanyLamp.ManufacturerId,
-                    tiffanyLamp.LampStyleId,
+                    tiffanyLamp.LampStyleId, 
                     tiffanyLamp.Picture,
-                    tiffanyLamp.Quantity,
-                    tiffanyLamp.Price,
+                    tiffanyLamp.Quantity, 
+                    tiffanyLamp.Price, 
                     tiffanyLamp.Discount);
 
-                if (created)
+                if (createdId)
                 {
                     return RedirectToAction(nameof(Index));
                 }
             }
 
-            tiffanyLamp.Manufacturers = _manufacturerService.GetManufacturers()
+            tiffanyLamp.Manufacturers = (await _manufacturerService.GetManufacturersAsync())
                 .Select(x => new ManufacturerPairVM
                 {
                     Id = x.Id,
                     Name = x.ManufacturerName
                 }).ToList();
 
-            tiffanyLamp.LampStyles = _lampStyleService.GetLampStyles()
+            tiffanyLamp.LampStyles = (await _lampStyleService.GetLampStylesAsync())
                 .Select(x => new LampStylePairVM
                 {
                     Id = x.Id,
@@ -99,9 +102,10 @@ namespace LuminousStudio.Controllers
             return View(tiffanyLamp);
         }
 
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public async Task<ActionResult> Edit(Guid id)
         {
-            TiffanyLamp tiffanyLamp = _tiffanyLampService.GetTiffanyLampById(id);
+            TiffanyLamp? tiffanyLamp = await _tiffanyLampService.GetTiffanyLampByIdAsync(id);
             if (tiffanyLamp == null)
             {
                 return NotFound();
@@ -112,21 +116,21 @@ namespace LuminousStudio.Controllers
                 Id = tiffanyLamp.Id,
                 TiffanyLampName = tiffanyLamp.TiffanyLampName,
                 ManufacturerId = tiffanyLamp.ManufacturerId,
-                LampStyleId = tiffanyLamp.LampStyleId,  
+                LampStyleId = tiffanyLamp.LampStyleId,
                 Picture = tiffanyLamp.Picture,
                 Quantity = tiffanyLamp.Quantity,
                 Price = tiffanyLamp.Price,
                 Discount = tiffanyLamp.Discount
             };
 
-            updatedTiffanyLamp.Manufacturers = _manufacturerService.GetManufacturers()
+            updatedTiffanyLamp.Manufacturers = (await _manufacturerService.GetManufacturersAsync())
                 .Select(m => new ManufacturerPairVM()
                 {
                     Id = m.Id,
                     Name = m.ManufacturerName
                 }).ToList();
 
-            updatedTiffanyLamp.LampStyles = _lampStyleService.GetLampStyles()
+            updatedTiffanyLamp.LampStyles = (await _lampStyleService.GetLampStylesAsync())
                 .Select(ls => new LampStylePairVM()
                 {
                     Id = ls.Id,
@@ -138,34 +142,34 @@ namespace LuminousStudio.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, TiffanyLampEditVM tiffanyLamp)
+        public async Task<ActionResult> Edit(Guid id, TiffanyLampEditVM tiffanyLamp)
         {
             if (ModelState.IsValid)
             {
-                var updated = _tiffanyLampService.Update(
-                    id,
-                    tiffanyLamp.TiffanyLampName,
+                var updated = await _tiffanyLampService.UpdateAsync(
+                    id, 
+                    tiffanyLamp.TiffanyLampName, 
                     tiffanyLamp.ManufacturerId,
-                    tiffanyLamp.LampStyleId,
-                    tiffanyLamp.Picture,
+                    tiffanyLamp.LampStyleId, 
+                    tiffanyLamp.Picture, 
                     tiffanyLamp.Quantity,
-                    tiffanyLamp.Price,
+                    tiffanyLamp.Price, 
                     tiffanyLamp.Discount);
 
                 if (updated)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction(nameof(Index));
                 }
             }
 
-            tiffanyLamp.Manufacturers = _manufacturerService.GetManufacturers()
+            tiffanyLamp.Manufacturers = (await _manufacturerService.GetManufacturersAsync())
                 .Select(x => new ManufacturerPairVM
                 {
                     Id = x.Id,
                     Name = x.ManufacturerName
                 }).ToList();
 
-            tiffanyLamp.LampStyles = _lampStyleService.GetLampStyles()
+            tiffanyLamp.LampStyles = (await _lampStyleService.GetLampStylesAsync())
                 .Select(x => new LampStylePairVM
                 {
                     Id = x.Id,
@@ -175,10 +179,11 @@ namespace LuminousStudio.Controllers
             return View(tiffanyLamp);
         }
 
+        [HttpGet]
         [AllowAnonymous]
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(Guid id)
         {
-            TiffanyLamp item = _tiffanyLampService.GetTiffanyLampById(id);
+            TiffanyLamp? item = await _tiffanyLampService.GetTiffanyLampByIdAsync(id);
             if (item == null)
             {
                 return NotFound();
@@ -201,9 +206,10 @@ namespace LuminousStudio.Controllers
             return View(tiffanyLamp);
         }
 
-        public ActionResult Delete(int id)
+        [HttpGet]
+        public async Task<ActionResult> Delete(Guid id)
         {
-            TiffanyLamp item = _tiffanyLampService.GetTiffanyLampById(id);
+            TiffanyLamp? item = await _tiffanyLampService.GetTiffanyLampByIdAsync(id);
             if (item == null)
             {
                 return NotFound();
@@ -228,20 +234,20 @@ namespace LuminousStudio.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [ActionName("Delete")]
+        public async Task<ActionResult> DeleteConfirmed(Guid id)
         {
-            var deleted = _tiffanyLampService.RemoveById(id);
+            var deleted = await _tiffanyLampService.RemoveByIdAsync(id);
 
             if (deleted)
             {
-                return this.RedirectToAction("Success");
+                return RedirectToAction(nameof(Success));
             }
-            else
-            {
-                return View();
-            }
+
+            return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public IActionResult Success()
         {
             return View();
