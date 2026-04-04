@@ -57,10 +57,13 @@
 
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <a asp-action="Add" asp-controller="ShoppingCart" asp-route-tiffanyLampId="@item.Id" class="btn btn-warning btn-sm d-flex align-items-center gap-1">
-                                    Add to Cart
-                                    <i class="bi bi-cart-fill"></i>
-                                </a>
+                                <form method="post" asp-action="Add" asp-controller="ShoppingCart"
+                                      asp-route-tiffanyLampId="@item.Id" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-warning btn-sm d-flex align-items-center gap-1">
+                                        Add to Cart <i class="bi bi-cart-fill"></i>
+                                    </button>
+                                </form>
                             }
 
                             @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
