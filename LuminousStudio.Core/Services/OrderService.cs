@@ -1,33 +1,32 @@
-﻿using LuminousStudio.Core.Contracts;
-using LuminousStudio.Infrastructure.Data;
-using LuminousStudio.Infrastructure.Data.Entities;
-using Microsoft.EntityFrameworkCore;
-
-namespace LuminousStudio.Core.Services
+﻿namespace LuminousStudio.Core.Services
 {
+    using Microsoft.EntityFrameworkCore;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Infrastructure.Data;
+    using LuminousStudio.Infrastructure.Data.Entities;
+
     public class OrderService : IOrderService
     {
         private readonly ApplicationDbContext _context;
-        private readonly ITiffanyLampService _tiffanyLampService;
 
-        public OrderService(ApplicationDbContext context, ITiffanyLampService tiffanyLampService)
+        public OrderService(ApplicationDbContext context)
         {
             _context = context;
-            _tiffanyLampService = tiffanyLampService;
         }
 
-        public bool Create(int tiffanyLampId, string userId, int quantity)
+        public async Task<bool> CreateAsync(Guid tiffanyLampId, Guid userId, int quantity)
         {
-            var tiffanyLamp = _context.TiffanyLamps.SingleOrDefault(x => x.Id == tiffanyLampId);
+            var tiffanyLamp = await _context.TiffanyLamps.SingleOrDefaultAsync(x => x.Id == tiffanyLampId);
 
-            if (tiffanyLamp == null || string.IsNullOrWhiteSpace(userId) || quantity <= 0 || tiffanyLamp.Quantity < quantity)
+            if (tiffanyLamp == null || userId == Guid.Empty || quantity <= 0 || tiffanyLamp.Quantity < quantity)
             {
                 return false;
             }
 
             Order item = new Order
             {
-                OrderDate = DateTime.Now,
+                OrderDate = DateTime.UtcNow,
                 TiffanyLampId = tiffanyLampId,
                 UserId = userId,
                 Quantity = quantity,
@@ -40,41 +39,41 @@ namespace LuminousStudio.Core.Services
             _context.TiffanyLamps.Update(tiffanyLamp);
             _context.Orders.Add(item);
 
-            return _context.SaveChanges() > 0;
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public List<Order> GetOrders()
+        public async Task<List<Order>> GetOrdersAsync()
         {
-            return _context.Orders
+            return await _context.Orders
                 .Include(x => x.User)
                 .Include(x => x.TiffanyLamp)
                 .OrderByDescending(x => x.OrderDate)
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<Order> GetOrdersByUser(string userId)
+        public async Task<List<Order>> GetOrdersByUserAsync(Guid userId)
         {
-            return _context.Orders
+            return await _context.Orders
                 .Include(x => x.User)
                 .Include(x => x.TiffanyLamp)
                 .Where(x => x.UserId == userId)
                 .OrderByDescending(x => x.OrderDate)
-                .ToList();
+                .ToListAsync();
         }
 
-        public Order GetOrderById(int orderId)
+        public async Task<Order?> GetOrderByIdAsync(Guid orderId)
         {
-            return _context.Orders
+            return await _context.Orders
                 .Include(x => x.User)
                 .Include(x => x.TiffanyLamp)
-                .FirstOrDefault(x => x.Id == orderId);
+                .FirstOrDefaultAsync(x => x.Id == orderId);
         }
 
-        public bool RemoveById(int orderId)
+        public async Task<bool> RemoveByIdAsync(Guid orderId)
         {
-            var order = _context.Orders
+            var order = await _context.Orders
                 .Include(x => x.TiffanyLamp)
-                .FirstOrDefault(x => x.Id == orderId);
+                .FirstOrDefaultAsync(x => x.Id == orderId);
 
             if (order == null)
             {
@@ -89,21 +88,22 @@ namespace LuminousStudio.Core.Services
 
             _context.Orders.Remove(order);
 
-            return _context.SaveChanges() > 0;
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public bool Update(int orderId, int tiffanyLampId, string userId, int quantity)
+        public async Task<bool> UpdateAsync(Guid orderId, Guid tiffanyLampId, Guid userId, int quantity)
         {
-            var order = _context.Orders
+            var order = await _context.Orders
                 .Include(x => x.TiffanyLamp)
-                .FirstOrDefault(x => x.Id == orderId);
+                .FirstOrDefaultAsync(x => x.Id == orderId);
 
-            if (order == null || string.IsNullOrWhiteSpace(userId) || quantity <= 0)
+            if (order == null || userId == Guid.Empty || quantity <= 0)
             {
                 return false;
             }
 
-            var newLamp = _context.TiffanyLamps.FirstOrDefault(x => x.Id == tiffanyLampId);
+            var newLamp = await _context.TiffanyLamps.FirstOrDefaultAsync(x => x.Id == tiffanyLampId);
+            
             if (newLamp == null)
             {
                 return false;
@@ -129,7 +129,7 @@ namespace LuminousStudio.Core.Services
             }
             else
             {
-                var oldLamp = _context.TiffanyLamps.FirstOrDefault(x => x.Id == order.TiffanyLampId);
+                var oldLamp = await _context.TiffanyLamps.FirstOrDefaultAsync(x => x.Id == order.TiffanyLampId);
                 if (oldLamp != null)
                 {
                     oldLamp.Quantity += order.Quantity;
@@ -154,7 +154,12 @@ namespace LuminousStudio.Core.Services
             _context.TiffanyLamps.Update(newLamp);
             _context.Orders.Update(order);
 
-            return _context.SaveChanges() > 0;
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> UserHasOrdersAsync(Guid userId)
+        {
+            return await _context.Orders.AnyAsync(o => o.UserId == userId);
         }
     }
 }
