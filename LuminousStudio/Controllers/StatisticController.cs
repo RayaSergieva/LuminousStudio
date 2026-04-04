@@ -1,28 +1,31 @@
-﻿using LuminousStudio.Core.Contracts;
-using LuminousStudio.Models.Statistic;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+
+    using LuminousStudio.Core.Contracts;
+    using LuminousStudio.Models.Statistic;
+
     [Authorize(Roles = "Administrator")]
-    public class StatisticController : Controller
+    public class StatisticController : BaseController
     {
-        private readonly IStatisticService statisticsService;
+        private readonly IStatisticService _statisticsService;
 
         public StatisticController(IStatisticService statisticsService)
         {
-            this.statisticsService = statisticsService;
+            _statisticsService = statisticsService;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            StatisticVM statistics = new StatisticVM();
-
-            statistics.CountClients = statisticsService.CountClients();
-            statistics.CountTiffanyLamps = statisticsService.CountTiffanyLamps();
-            statistics.CountOrders = statisticsService.CountOrders();
-            statistics.SumOrders = statisticsService.SumOrders();
+            StatisticVM statistics = new StatisticVM
+            {
+                CountClients = await _statisticsService.CountClientsAsync(),
+                CountTiffanyLamps = await _statisticsService.CountTiffanyLampsAsync(),
+                CountOrders = await _statisticsService.CountOrdersAsync(),
+                SumOrders = await _statisticsService.SumOrdersAsync()
+            };
 
             return View(statistics);
         }
