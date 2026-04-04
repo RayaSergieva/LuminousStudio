@@ -2,9 +2,9 @@
 {
     public interface IStatisticService
     {
-        int CountTiffanyLamps();
-        int CountClients();
-        int CountOrders();
-        decimal SumOrders();
+        Task<int> CountTiffanyLampsAsync();
+        Task<int> CountClientsAsync();
+        Task<int> CountOrdersAsync();
+        Task<decimal> SumOrdersAsync();
     }
 }
