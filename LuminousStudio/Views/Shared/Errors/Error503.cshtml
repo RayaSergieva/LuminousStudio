@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Service Unavailable";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container text-center mt-5">
+    <div class="py-5">
+        <i class="bi bi-cloud-slash-fill text-danger" style="font-size: 5rem;"></i>
+        <h1 class="display-1 fw-bold text-danger mt-3">503</h1>
+        <h2 class="mb-4">Service Unavailable</h2>
+        <p class="lead text-muted mb-4">
+            The server is temporarily unable to handle the request. Please try again later.
+        </p>
+        <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+            <i class="bi bi-house"></i> Back to Home
+        </a>
+    </div>
+</div>
