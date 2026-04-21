@@ -1,4 +1,5 @@
-﻿@model IEnumerable<LuminousStudio.Models.TiffanyLamp.TiffanyLampIndexVM>
+﻿@using LuminousStudio.Web.Common
+@model PaginatedList<LuminousStudio.Web.ViewModels.TiffanyLamp.TiffanyLampIndexVM>
 
 @{
     ViewData["Title"] = "Tiffany Lamps";
@@ -11,7 +12,7 @@
 <div class="container py-5 mt-5 position-relative" style="z-index: 1;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="display-5 text-white">Tiffany Lamps</h1>
-        @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+        @if (User.Identity?.IsAuthenticated == true && User.IsInRole(ApplicationRoles.Administrator))
         {
             <a asp-action="Create" class="btn btn-primary">+ Create New</a>
         }
@@ -19,10 +20,12 @@
 
     <form asp-controller="TiffanyLamp" asp-action="Index" method="get" class="row g-3 mb-4">
         <div class="col-md-4">
-            <input type="text" name="SearchStringManufacturerName" class="form-control" placeholder="Search by Manufacturer" />
+            <input type="text" name="SearchStringManufacturerName" class="form-control"
+                   placeholder="Search by Manufacturer" />
         </div>
         <div class="col-md-4">
-            <input type="text" name="SearchStringLampStyleName" class="form-control" placeholder="Search by Lamp Style" />
+            <input type="text" name="SearchStringLampStyleName" class="form-control"
+                   placeholder="Search by Lamp Style" />
         </div>
         <div class="col-md-4 d-grid">
             <input type="submit" value="Filter" class="btn btn-outline-light" />
@@ -30,21 +33,21 @@
     </form>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach (var item in Model)
+        @foreach (var item in Model.Items)
         {
             <div class="col">
                 <div class="card h-100 shadow-sm tiffany-card">
-                    <img src="@item.Picture" class="card-img-top" alt="@item.TiffanyLampName" style="height: 300px; object-fit: cover;">
+                    <img src="@item.Picture" class="card-img-top" alt="@item.TiffanyLampName"
+                         style="height: 300px; object-fit: cover;">
                     <div class="lamp-name-box text-center">
                         @item.TiffanyLampName
                     </div>
-
                     <div class="card-body">
                         <p class="card-text mb-1">
                             <strong>Manufacturer:</strong> @item.ManufacturerName<br />
                             <strong>Style:</strong> @item.LampStyleName<br />
                             <strong>Price:</strong> $@item.Price<br />
-                            <strong>Quantity:</strong> @item.Quantity
+                            <strong>Quantity:</strong> <span data-lamp-id="@item.Id">@item.Quantity</span>
                         </p>
                         @if (item.Discount > 0)
                         {
@@ -53,9 +56,10 @@
                     </div>
                     <div class="card-footer border-top-0 bg-transparent">
                         <div class="d-flex flex-wrap gap-2">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success btn-sm">Details</a>
+                            <a asp-action="Details" asp-route-id="@item.Id"
+                               class="btn btn-success btn-sm">Details</a>
 
-                            @if (User.Identity.IsAuthenticated)
+                            @if (User.Identity?.IsAuthenticated == true)
                             {
                                 <form method="post" asp-action="Add" asp-controller="ShoppingCart"
                                       asp-route-tiffanyLampId="@item.Id" style="display:inline;">
@@ -66,10 +70,12 @@
                                 </form>
                             }
 
-                            @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+                            @if (User.Identity?.IsAuthenticated == true && User.IsInRole(ApplicationRoles.Administrator))
                             {
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">Edit</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm">Delete</a>
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-outline-primary btn-sm">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                   class="btn btn-outline-danger btn-sm">Delete</a>
                             }
                         </div>
                     </div>
@@ -77,10 +83,84 @@
             </div>
         }
     </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="d-flex justify-content-center mt-5">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                               asp-route-page="@(Model.PageIndex - 1)"
+                               asp-route-searchStringLampStyleName="@Context.Request.Query["searchStringLampStyleName"]"
+                               asp-route-searchStringManufacturerName="@Context.Request.Query["searchStringManufacturerName"]">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                            <a class="page-link" asp-action="Index"
+                                   asp-route-page="@i"
+                                   asp-route-searchStringLampStyleName="@Context.Request.Query["searchStringLampStyleName"]"
+                                   asp-route-searchStringManufacturerName="@Context.Request.Query["searchStringManufacturerName"]">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index"
+                               asp-route-page="@(Model.PageIndex + 1)"
+                               asp-route-searchStringLampStyleName="@Context.Request.Query["searchStringLampStyleName"]"
+                               asp-route-searchStringManufacturerName="@Context.Request.Query["searchStringManufacturerName"]">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <p class="text-center text-white mt-2">
+            Showing page @Model.PageIndex of @Model.TotalPages
+            (@Model.TotalItems total lamps)
+        </p>
+    }
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/stockHub")
+        .withAutomaticReconnect()
+        .build();
+
+        connection.on("ReceiveStockUpdate", function (lampId, newQuantity, lampName) {
+        const quantityElements = document.querySelectorAll(`[data-lamp-id="${lampId}"]`);
+        quantityElements.forEach(el => {
+        el.textContent = newQuantity;
+        });
+        showToast(`${lampName} stock updated: ${newQuantity} remaining`);
+        });
+
+        connection.start().catch(err => console.error(err));
+
+        function showToast(message) {
+        const toast = document.createElement("div");
+        toast.className = "position-fixed bottom-0 end-0 p-3";
+        toast.style.zIndex = "9999";
+        toast.innerHTML = `
+        <div class="toast show align-items-center text-white bg-success border-0" role="alert">
+        <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+        onclick="this.closest('.position-fixed').remove()"></button>
+        </div>
+        </div>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+        }
+    </script>
 }

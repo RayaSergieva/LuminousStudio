@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LuminousStudio.Data.Common\LuminousStudio.Data.Common.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Data.Models\LuminousStudio.Data.Models.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Data\LuminousStudio.Data.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Services.Common\LuminousStudio.Services.Common.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Services.Core\LuminousStudio.Services.Core.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Web.Infrastructure\LuminousStudio.Web.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
