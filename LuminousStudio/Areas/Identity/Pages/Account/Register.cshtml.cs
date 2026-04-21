@@ -1,11 +1,17 @@
-using LuminousStudio.Infrastructure.Data.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
-
 namespace LuminousStudio.Areas.Identity.Pages.Account
 {
+    using System.ComponentModel.DataAnnotations;
+
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.RazorPages;
+
+    using LuminousStudio.Data.Common;
+    using LuminousStudio.Data.Models;
+    using LuminousStudio.Services.Common;
+
+    using static LuminousStudio.Web.Common.ValidationMessages.ApplicationUser;
+
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -20,56 +26,65 @@ namespace LuminousStudio.Areas.Identity.Pages.Account
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public InputModel Input { get; set; } = null!;
 
-        public string ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; }
 
         public class InputModel
         {
-            [Required]
-            [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            [Required(ErrorMessage = FirstNameRequiredMessage)]
+            [StringLength(EntityConstants.ApplicationUser.FirstNameMaxLength,
+                MinimumLength = EntityConstants.ApplicationUser.FirstNameMinLength,
+                ErrorMessage = FirstNameMaxLengthMessage)]
             [Display(Name = "First Name")]
-            public string FirstName { get; set; }
+            public string FirstName { get; set; } = null!;
 
-            [Required]
-            [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            [Required(ErrorMessage = LastNameRequiredMessage)]
+            [StringLength(EntityConstants.ApplicationUser.LastNameMaxLength,
+                MinimumLength = EntityConstants.ApplicationUser.LastNameMinLength,
+                ErrorMessage = LastNameMaxLengthMessage)]
             [Display(Name = "Last Name")]
-            public string LastName { get; set; }
+            public string LastName { get; set; } = null!;
 
-            [Required]
-            [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
+            [Required(ErrorMessage = AddressRequiredMessage)]
+            [StringLength(EntityConstants.ApplicationUser.AddressMaxLength,
+                MinimumLength = EntityConstants.ApplicationUser.AddressMinLength,
+                ErrorMessage = AddressMaxLengthMessage)]
             [Display(Name = "Address")]
-            public string Address { get; set; }
+            public string Address { get; set; } = null!;
 
-            [Required]
+            [Required(ErrorMessage = UsernameRequiredMessage)]
             [Display(Name = "Username")]
-            public string UserName { get; set; }
+            public string UserName { get; set; } = null!;
 
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = EmailRequiredMessage)]
+            [EmailAddress(ErrorMessage = EmailInvalidMessage)]
             [Display(Name = "Email")]
-            public string Email { get; set; }
+            public string Email { get; set; } = null!;
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = PasswordRequiredMessage)]
+            [StringLength(EntityConstants.ApplicationUser.PasswordMaxLength,
+                MinimumLength = EntityConstants.ApplicationUser.PasswordMinLength,
+                ErrorMessage = PasswordMinLengthMessage)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
-            public string Password { get; set; }
+            public string Password { get; set; } = null!;
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
+            [Compare("Password", ErrorMessage = PasswordMismatchMessage)]
+            public string ConfirmPassword { get; set; } = null!;
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task OnGetAsync(string? returnUrl = null)
         {
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser
@@ -85,15 +100,17 @@ namespace LuminousStudio.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "Client");
+                    await _userManager.AddToRoleAsync(user, ApplicationRoles.Client);
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
+
             return Page();
         }
     }
