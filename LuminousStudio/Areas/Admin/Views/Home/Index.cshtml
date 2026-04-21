@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Admin Dashboard</h1>
+        <p class="lead text-muted">Manage your application using the sections below</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body d-flex flex-column align-items-center text-center">
+                    <i class="bi bi-lightbulb-fill text-warning display-3 mb-3"></i>
+                    <h5 class="card-title fw-bold">Manage Lamps</h5>
+                    <p class="card-text text-muted">Create, edit, or remove Tiffany lamps.</p>
+                    <div class="mt-auto w-100">
+                        <a asp-area="Admin" asp-controller="LampManagement" asp-action="Index"
+                               class="btn btn-warning fw-bold w-100">
+                            <i class="bi bi-lightbulb"></i> Go to Lamps
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body d-flex flex-column align-items-center text-center">
+                    <i class="bi bi-people-fill text-primary display-3 mb-3"></i>
+                    <h5 class="card-title fw-bold">Manage Users</h5>
+                    <p class="card-text text-muted">View and remove client accounts.</p>
+                    <div class="mt-auto w-100">
+                        <a asp-area="Admin" asp-controller="UserManagement" asp-action="Index"
+                               class="btn btn-primary fw-bold w-100">
+                            <i class="bi bi-people"></i> Go to Users
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body d-flex flex-column align-items-center text-center">
+                    <i class="bi bi-bag-fill text-success display-3 mb-3"></i>
+                    <h5 class="card-title fw-bold">Manage Orders</h5>
+                    <p class="card-text text-muted">View all customer orders.</p>
+                    <div class="mt-auto w-100">
+                        <a asp-area="Admin" asp-controller="OrderManagement" asp-action="Index"
+                               class="btn btn-success fw-bold w-100">
+                            <i class="bi bi-bag"></i> Go to Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body d-flex flex-column align-items-center text-center">
+                    <i class="bi bi-bar-chart-fill text-danger display-3 mb-3"></i>
+                    <h5 class="card-title fw-bold">Statistics</h5>
+                    <p class="card-text text-muted">View application statistics.</p>
+                    <div class="mt-auto w-100">
+                        <a asp-area="Admin" asp-controller="Statistic" asp-action="Index"
+                               class="btn btn-danger fw-bold w-100">
+                            <i class="bi bi-bar-chart"></i> Go to Statistics
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

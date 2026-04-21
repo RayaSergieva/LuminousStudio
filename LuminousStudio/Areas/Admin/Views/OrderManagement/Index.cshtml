@@ -1,0 +1,101 @@
+﻿@using LuminousStudio.Web.Common
+@model PaginatedList<LuminousStudio.Web.ViewModels.Order.OrderIndexVM>
+
+@{
+    ViewData["Title"] = "Manage Orders";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold">All Orders</h1>
+        <a asp-area="Admin" asp-controller="Home" asp-action="Index"
+               class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Order Date</th>
+                    <th>User</th>
+                    <th>Lamp</th>
+                    <th>Image</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.Items)
+                {
+                    <tr>
+                        <td>@order.OrderDate</td>
+                        <td>@order.User</td>
+                        <td>@order.TiffanyLamp</td>
+                        <td>
+                            <img src="@order.Picture" alt="@order.TiffanyLamp"
+                                 style="width: 60px; height: 60px; object-fit: cover;"
+                                 class="rounded" />
+                        </td>
+                        <td>@order.Quantity</td>
+                        <td>$@order.Price.ToString("0.00")</td>
+                        <td>
+                            @if (order.Discount > 0)
+                            {
+                                <span class="badge bg-success">@order.Discount.ToString("0.00")%</span>
+                            }
+                        </td>
+                        <td>$@order.TotalPrice.ToString("0.00")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="d-flex justify-content-center mt-4">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link" asp-area="Admin"
+                               asp-controller="OrderManagement"
+                               asp-action="Index"
+                               asp-route-page="@(Model.PageIndex - 1)">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                            <a class="page-link" asp-area="Admin"
+                                   asp-controller="OrderManagement"
+                                   asp-action="Index"
+                                   asp-route-page="@i">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                        <a class="page-link" asp-area="Admin"
+                               asp-controller="OrderManagement"
+                               asp-action="Index"
+                               asp-route-page="@(Model.PageIndex + 1)">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <p class="text-center text-muted mt-2">
+            Showing page @Model.PageIndex of @Model.TotalPages
+            (@Model.TotalItems total orders)
+        </p>
+    }
+</div>
