@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LuminousStudio.Data.Seeding\LuminousStudio.Data.Seeding.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Data\LuminousStudio.Data.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Services.Admin\LuminousStudio.Services.Admin.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Services.Common\LuminousStudio.Services.Common.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Services.Core\LuminousStudio.Services.Core.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Web.Common\LuminousStudio.Web.Common.csproj" />
+  </ItemGroup>
+
+</Project>

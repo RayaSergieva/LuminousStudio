@@ -1,5 +1,23 @@
 <Solution>
-  <Project Path="LuminousStudio.Core/LuminousStudio.Core.csproj" Id="65453b27-b716-42aa-9e90-45186977f709" />
-  <Project Path="LuminousStudio.Infrastructure/LuminousStudio.Infrastructure.csproj" Id="465626a2-7d75-4666-bfdd-0e023aface0d" />
-  <Project Path="LuminousStudio/LuminousStudio.csproj" />
+  <Folder Name="/Data/">
+    <Project Path="LuminousStudio.Data.Common/LuminousStudio.Data.Common.csproj" Id="82e21bd0-2292-4410-96f8-757ca7d66ef5" />
+    <Project Path="LuminousStudio.Data.Models/LuminousStudio.Data.Models.csproj" Id="03b717bf-5e92-4ff3-9203-35329ae74d83" />
+    <Project Path="LuminousStudio.Data.Seeding/LuminousStudio.Data.Seeding.csproj" Id="11be63c9-50c5-45ad-aec7-3925de2ad085" />
+    <Project Path="LuminousStudio.Data/LuminousStudio.Data.csproj" Id="0ac1b57e-45bf-4018-8480-cc1f6987ce6a" />
+  </Folder>
+  <Folder Name="/Services/">
+    <Project Path="LuminousStudio.Services.Admin/LuminousStudio.Services.Admin.csproj" Id="905a3f71-fe4a-49b4-a746-848a3d978a84" />
+    <Project Path="LuminousStudio.Services.Common/LuminousStudio.Services.Common.csproj" Id="97a4c551-413f-4771-ae34-d83556a2853f" />
+    <Project Path="LuminousStudio.Services.Core/LuminousStudio.Services.Core.csproj" Id="e5867233-9041-4a4b-8145-4584384a40cb" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="LuminousStudio.Tests.Unit/LuminousStudio.Tests.Unit.csproj" Id="de24ac86-4726-4362-aad3-b7eeaab6c590" />
+  </Folder>
+  <Folder Name="/Web/">
+    <Project Path="LuminousStudio.Web.Common/LuminousStudio.Web.Common.csproj" Id="234eb3b6-3f85-4adc-9549-d6125f335270" />
+    <Project Path="LuminousStudio.Web.Infrastructure/LuminousStudio.Web.Infrastructure.csproj" Id="993dafff-7af3-4d19-bc25-9c6f6ae8991c" />
+    <Project Path="LuminousStudio.Web.ViewModels/LuminousStudio.Web.ViewModels.csproj" Id="f5446893-af84-4162-92ed-1bbdc73b9fb6" />
+    <Project Path="LuminousStudio.WebApi/LuminousStudio.WebApi.csproj" Id="59d63c0c-bcf5-4945-b3f0-7aaec7dbca15" />
+    <Project Path="LuminousStudio/LuminousStudio.Web.csproj" />
+  </Folder>
 </Solution>
