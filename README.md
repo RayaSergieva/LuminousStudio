@@ -1,113 +1,379 @@
 # LuminousStudio
 
-LuminousStudio is a web application for browsing and ordering Tiffany lamps. It is built with ASP.NET Core MVC and provides a modern interface for viewing products, filtering them by style and manufacturer, managing a shopping cart, placing orders, and administering the system through a role-based dashboard.
+LuminousStudio is a full-stack ASP.NET Core web application for browsing, managing, and ordering Tiffany lamps. It is built with a professional multi-layer architecture, a RESTful Web API, real-time stock notifications via SignalR, a role-based admin dashboard, and comprehensive unit test coverage.
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Technologies](#technologies)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Main Entities](#main-entities)
+- [Getting Started](#getting-started)
+- [Default Admin Account](#default-admin-account)
+- [Access Levels](#access-levels)
+- [Web API](#web-api)
+- [Real-Time Features](#real-time-features)
+- [Validation and Security](#validation-and-security)
+- [Unit Tests](#unit-tests)
+- [Deployment](#deployment)
+
+---
 
 ## Overview
 
-The application is designed with a clear separation of responsibilities and includes both a public product catalog and protected functionality for authenticated users and administrators. Visitors can browse the available Tiffany lamps, view product details, and explore informational pages such as About Us and Contacts. Registered users can add products to a shopping cart, place orders, and review their personal order history. Administrators have access to additional management features such as product maintenance, user management, order overview, and site statistics.
+LuminousStudio is a feature-rich e-commerce application focused on Tiffany lamps. It provides a public product catalog, a shopping cart, order management, and a full administrative interface. The project follows clean architecture principles with strict separation of concerns across multiple class libraries, a repository pattern, strongly-typed configuration, custom middleware, and a RESTful API layer.
+
+---
 
 ## Features
 
-LuminousStudio includes user registration and login, role-based access for guests, clients, and administrators, a product catalog for Tiffany lamps, filtering by lamp style and manufacturer, a product details page, shopping cart functionality, order creation and order history, administrative CRUD operations for products, an admin overview of all orders, admin user management, and a statistics dashboard.
+### Public
+- Browse the full Tiffany lamp catalog with pagination
+- Filter lamps by style and manufacturer
+- View detailed product pages
+- Real-time stock updates without page refresh (SignalR)
+- Responsive design with Bootstrap
 
-## Technologies Used
+### Authenticated Users
+- User registration and login with ASP.NET Core Identity
+- Add products to a shopping cart
+- Adjust quantities and remove items
+- Place single or bulk orders from the cart
+- View personal order history
 
-The project is built with C#, ASP.NET Core MVC, Entity Framework Core, ASP.NET Core Identity, SQL Server, Razor Views, HTML, CSS, Bootstrap, and JavaScript.
+### Administrators
+- Full Admin Area dashboard
+- Create, edit, and delete Tiffany lamps
+- View and manage all customer orders
+- Manage client accounts
+- View site-wide statistics (clients, lamps, orders, revenue)
+- Automatically redirected to Admin Dashboard on login
+
+### System
+- Custom error pages for 400, 401, 403, 404, 500, 503
+- Global exception handling middleware
+- Security headers middleware (XSS, clickjacking protection)
+- Request logging middleware
+- Strongly-typed configuration from appsettings.json
+- Assembly-scanned service and repository registration
+
+---
+
+## Technologies
+
+| Category | Technology |
+|---|---|
+| Framework | ASP.NET Core MVC (.NET 10) |
+| ORM | Entity Framework Core 10 |
+| Database | Microsoft SQL Server |
+| Identity | ASP.NET Core Identity |
+| Real-Time | SignalR |
+| API Documentation | Swagger / OpenAPI |
+| Frontend | Razor Views, Bootstrap 5, Bootstrap Icons |
+| JavaScript | Vanilla JS, SignalR JS Client |
+| Testing | xUnit, Moq, FluentAssertions |
+| Architecture | Repository Pattern, Service Layer, MVC Areas |
+
+---
+
+## Architecture
+
+The solution is organized into 15 class library projects following clean architecture principles:
+
+```
+LuminousStudio (Solution)
+├── Data
+│   ├── LuminousStudio.Data              — DbContext, Fluent API configurations, Migrations, Repositories
+│   ├── LuminousStudio.Data.Common       — EntityConstants (validation constraints)
+│   ├── LuminousStudio.Data.Models       — Entity classes
+│   └── LuminousStudio.Data.Seeding      — Identity, LampStyle, Manufacturer seeders
+├── Services
+│   ├── LuminousStudio.Services.Admin    — Admin-specific services (UserManagement, LampManagement)
+│   ├── LuminousStudio.Services.Common   — Shared interfaces (ApplicationRoles, IStockHubService)
+│   └── LuminousStudio.Services.Core     — Business logic services and contracts
+├── Tests
+│   ├── LuminousStudio.Tests.Integration
+│   ├── LuminousStudio.Tests.Selenium
+│   └── LuminousStudio.Tests.Unit        — Unit tests with 31 passing tests
+└── Web
+    ├── LuminousStudio.Web               — MVC application (controllers, views, hubs)
+    ├── LuminousStudio.Web.Common        — Configuration classes, ValidationMessages, PaginatedList
+    ├── LuminousStudio.Web.Infrastructure — Middleware, extensions (ServiceCollection, ApplicationBuilder)
+    ├── LuminousStudio.Web.ViewModels    — ViewModels with validation attributes
+    └── LuminousStudio.WebApi            — RESTful Web API with Swagger
+```
+
+### Dependency Flow
+
+```
+Web → Web.Infrastructure → Services.Core → Data → Data.Models
+                         → Services.Admin → Data.Repository
+                         → Services.Common
+```
+
+---
 
 ## Project Structure
 
-The solution is organized into three layers. The LuminousStudio project is the presentation layer, LuminousStudio.Core contains the business logic, and LuminousStudio.Infrastructure is responsible for data access. This structure helps keep the code organized, easier to maintain, and easier to extend.
+### Data Layer
+- **Fluent API** configuration for all entities — no magic strings or numbers in entity classes
+- **Repository Pattern** with `IRepository<T>`, `IAsyncRepository<T>`, and `BaseRepository<T>`
+- **Seeding** separated into dedicated seeder classes (`IdentitySeeder`, `LampStyleSeeder`, `ManufacturerSeeder`)
+- **Entity Constants** centralize all validation constraints in `EntityConstants.cs`
+
+### Service Layer
+- Services depend only on repository interfaces — never on `DbContext` directly
+- Admin services separated into `LuminousStudio.Services.Admin`
+- Shared role constants and hub interfaces in `LuminousStudio.Services.Common`
+
+### Web Layer
+- **MVC Areas** — full Admin area with dashboard, lamp management, user management, order overview, statistics
+- **Pagination** on TiffanyLamps and Orders
+- **Custom Middleware** — global exception handling, security headers, admin redirection
+- **Validation Messages** centralized in `ValidationMessages.cs`
+- **Strongly-typed configuration** — `AdminSettings` and `IdentitySettings` from `appsettings.json`
+
+---
 
 ## Main Entities
 
-The main entities used in the application are:
+| Entity | Description |
+|---|---|
+| `ApplicationUser` | Extends IdentityUser with FirstName, LastName, Address |
+| `TiffanyLamp` | Main product entity with price, discount, quantity |
+| `Manufacturer` | Lamp manufacturer or designer |
+| `LampStyle` | Style category (Table Lamp, Floor Lamp, Chandelier, etc.) |
+| `Order` | Customer order with quantity, price, discount |
+| `ShoppingCart` | Cart items per user before checkout |
 
-- ApplicationUser
-- TiffanyLamp
-- Manufacturer
-- LampStyle
-- Order
-- ShoppingCart
-
-## Main Pages
-
-The main pages in the application include:
-
-- Home
-- About Us
-- Contacts
-- Tiffany Lamps
-- Shopping Cart
-- My Orders
-- Clients
-- Statistics
+---
 
 ## Getting Started
 
-To run the project locally, first clone the repository:
+### Prerequisites
+- Visual Studio 2022 or later
+- .NET 10 SDK
+- SQL Server (local or remote)
 
-git clone https://github.com/RayaSergieva/LuminousStudio
+### Setup
 
-Then open the solution in Visual Studio 2022 or a newer compatible version.
+**1. Clone the repository:**
+```bash
+git clone https://github.com/your-username/LuminousStudio
+cd LuminousStudio
+```
 
-After that, configure the database connection in appsettings.json by updating the DefaultConnection value so it matches your local SQL Server setup. A typical example looks like this:
-
+**2. Configure the database connection** in `LuminousStudio.Web/appsettings.json`:
+```json
 {
   "ConnectionStrings": {
     "DefaultConnection": "Server=.;Database=LuminousStudioDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
   }
 }
+```
 
-If your SQL Server uses a different instance name, replace Server=. with your actual server or instance.
-
-Once the connection string is configured, restore the project dependencies if necessary by running:
-
+**3. Restore dependencies:**
+```bash
 dotnet restore
+```
 
-After restoring the packages, apply the database migrations to create or update the database. You can do this either from Package Manager Console with:
-
+**4. Apply migrations** — set default project to `LuminousStudio.Data` in Package Manager Console:
+```
 Update-Database
+```
+or with .NET CLI:
+```bash
+dotnet ef database update --project LuminousStudio.Data
+```
 
-or with the .NET CLI using:
+**5. Run the application** — press `F5` in Visual Studio or:
+```bash
+dotnet run --project LuminousStudio.Web
+```
 
-dotnet ef database update
+The application will seed roles, the admin account, lamp styles, and manufacturers automatically on first run.
 
-When the database is ready, start the application from Visual Studio by pressing F5 for debugging or Ctrl + F5 to run without debugging. The project will then open in your browser.
+---
 
 ## Default Admin Account
 
-On the first run, the application seeds the required roles and creates a default administrator account.
+| Field | Value |
+|---|---|
+| Username | admin |
+| Email | admin@admin.com |
+| Password | Admin123456 |
 
-Default administrator credentials:
+These credentials are configurable in `appsettings.json` under `AdminSettings`.
 
-- Username: admin
-- Email: admin@admin.com
-- Password: Admin123456
-
-This account can be used to access the administrative features of the system.
+---
 
 ## Access Levels
 
 ### Guest
+- Browse the Tiffany lamp catalog
+- Filter by style and manufacturer
+- View product details
+- Access About Us and Contacts pages
 
-A guest can browse products, view product details, filter lamps by style and manufacturer, and access the public pages of the site.
-
-### Registered User
-
-A registered user can log in, add products to the shopping cart, place orders, and review personal orders.
+### Registered User (Client role)
+- Everything a guest can do
+- Add items to the shopping cart
+- Adjust quantities in the cart
+- Place orders (single or from cart)
+- View personal order history
 
 ### Administrator
+- Everything a registered user can do
+- Automatically redirected to Admin Dashboard on login
+- Full CRUD for Tiffany lamps
+- View all customer orders
+- Manage client accounts
+- View site statistics (clients, lamps, orders, total revenue)
 
-An administrator can create, edit, and delete products, view all orders, manage users, and access the statistics dashboard.
+---
+
+## Web API
+
+The `LuminousStudio.WebApi` project exposes a RESTful API documented with Swagger.
+
+### Running the API
+
+The API runs on a separate port. To start both the Web app and the API simultaneously, configure **Multiple Startup Projects** in Visual Studio solution properties.
+
+Access Swagger UI at:
+```
+https://localhost:{api_port}/swagger
+```
+
+### Endpoints
+
+#### TiffanyLamps
+| Method | Route | Description | Auth |
+|---|---|---|---|
+| GET | `/api/TiffanyLamps` | Get all lamps | Public |
+| GET | `/api/TiffanyLamps/{id}` | Get lamp by ID | Public |
+| GET | `/api/TiffanyLamps/search` | Search by style and manufacturer | Public |
+| GET | `/api/TiffanyLamps/style/{styleName}` | Filter by style | Public |
+| GET | `/api/TiffanyLamps/discounted` | Get discounted lamps | Public |
+
+#### Orders
+| Method | Route | Description | Auth |
+|---|---|---|---|
+| GET | `/api/OrdersApi` | Get all orders | Admin |
+| GET | `/api/OrdersApi/my` | Get current user orders | User |
+
+#### Statistics
+| Method | Route | Description | Auth |
+|---|---|---|---|
+| GET | `/api/StatisticsApi` | Get site statistics | Admin |
+
+#### LampStyles
+| Method | Route | Description | Auth |
+|---|---|---|---|
+| GET | `/api/LampStylesApi` | Get all lamp styles | Public |
+
+#### Manufacturers
+| Method | Route | Description | Auth |
+|---|---|---|---|
+| GET | `/api/ManufacturersApi` | Get all manufacturers | Public |
+
+---
+
+## Real-Time Features
+
+LuminousStudio uses **SignalR** to broadcast real-time stock updates to all connected clients.
+
+When a user places an order, all users currently viewing the TiffanyLamps page will immediately see the updated quantity for that lamp without refreshing the page. A toast notification appears in the bottom-right corner confirming the stock change.
+
+### How it works
+1. User places an order via the web application
+2. `OrderController` calls `IStockHubService.NotifyStockUpdateAsync`
+3. `StockHubService` broadcasts via `IHubContext<StockHub>`
+4. All connected clients receive the `ReceiveStockUpdate` event
+5. The quantity display updates and a toast notification appears
+
+---
 
 ## Validation and Security
 
-The application includes both server-side and client-side validation. Server-side validation is implemented through Data Annotations and controller validation checks, while client-side validation is enabled through Razor validation helpers and validation scripts. Authentication and authorization are handled with ASP.NET Core Identity, and access to protected pages and actions is controlled through user roles.
+### Validation
+- **Client-side** — Data Annotations on ViewModels with centralized error messages in `ValidationMessages.cs`
+- **Server-side** — `ModelState` validation in all controllers
+- **Database-level** — Fluent API constraints (MaxLength, IsRequired, column types)
 
-## Notes
+### Security
+- **Authentication** — ASP.NET Core Identity with role-based authorization
+- **CSRF Protection** — AntiForgeryToken on all forms
+- **SQL Injection** — EF Core parameterized queries
+- **XSS Protection** — Razor auto-escaping + `X-XSS-Protection` security header
+- **Clickjacking** — `X-Frame-Options: DENY` security header
+- **Content Sniffing** — `X-Content-Type-Options: nosniff` header
+- **Referrer Policy** — `strict-origin-when-cross-origin` header
+- **Global Exception Handling** — custom middleware catches all unhandled exceptions
 
-The application uses Entity Framework Core with SQL Server. The database is managed through migrations, and initial data such as roles, the administrator account, lamp styles, and manufacturers are seeded automatically when the application starts.
+---
+
+## Unit Tests
+
+The `LuminousStudio.Tests.Unit` project contains **31 unit tests** covering the business logic layer with 65%+ coverage.
+
+### Test Coverage
+
+| Service | Tests | Methods Covered |
+|---|---|---|
+| `OrderService` | 9 | `CreateAsync`, `UserHasOrdersAsync`, `RemoveByIdAsync` |
+| `ShoppingCartService` | 4 | `AddOrUpdateItemAsync`, `RemoveAsync`, `UpdateAsync` |
+| `StatisticService` | 8 | All 4 methods |
+| `TiffanyLampService` | 4 | `CreateAsync`, `RemoveByIdAsync`, `UpdateAsync`, `GetTiffanyLampsAsync` |
+| `LampStyleService` | 3 | All 3 methods |
+| `ManufacturerService` | 3 | All 3 methods |
+
+### Running Tests
+
+In Visual Studio go to **Test → Run All Tests** or press `Ctrl+R, A`.
+
+### Test Stack
+- **xUnit** — test framework
+- **Moq** — mocking framework
+- **FluentAssertions** — readable assertions
+- Custom `AsyncQueryHelper` for EF Core async query support in tests
+
+---
+
+## Deployment
+
+The application is designed to be deployed to **Microsoft Azure App Service**.
+
+### Environment Configuration
+
+For production deployment, override sensitive settings through Azure App Service Configuration (environment variables) rather than `appsettings.json`:
+
+```
+ConnectionStrings__DefaultConnection = <your-production-connection-string>
+AdminSettings__Password = <strong-production-password>
+AdminSettings__Email = <production-admin-email>
+```
+
+### Steps
+1. Create an Azure App Service
+2. Create an Azure SQL Database
+3. Configure connection string in Azure App Service settings
+4. Deploy via Visual Studio Publish or GitHub Actions
+5. Run migrations on the production database
+
+---
 
 ## Possible Future Improvements
 
-Possible future improvements include product reviews and ratings, online payment integration, advanced search and filtering, product recommendations, expanded administrative tools, and improved user profile features.
+- Product reviews and ratings system
+- Online payment integration
+- Advanced search with price range filtering
+- Product recommendations based on order history
+- Email notifications for orders
+- React frontend consuming the Web API
+- Azure Blob Storage for product images
+- Performance monitoring and analytics dashboard
