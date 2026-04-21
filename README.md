@@ -163,7 +163,7 @@ Web → Web.Infrastructure → Services.Core → Data → Data.Models
 
 **1. Clone the repository:**
 ```bash
-git clone https://github.com/your-username/LuminousStudio
+git clone https://github.com/RayaSergieva/LuminousStudio
 cd LuminousStudio
 ```
 
