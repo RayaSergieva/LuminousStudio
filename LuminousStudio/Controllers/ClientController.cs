@@ -1,15 +1,16 @@
-﻿namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Web.Controllers
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
-    using LuminousStudio.Core.Contracts;
-    using LuminousStudio.Infrastructure.Data.Entities;
-    using LuminousStudio.Models.Client;
+    using LuminousStudio.Data.Models;
+    using LuminousStudio.Services.Core.Contracts;
+    using LuminousStudio.Services.Common;
+    using LuminousStudio.Web.ViewModels.Client;
 
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = ApplicationRoles.Administrator)]
     public class ClientController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;

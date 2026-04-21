@@ -1,10 +1,10 @@
-namespace LuminousStudio.Controllers
+namespace LuminousStudio.Web.Controllers
 {
     using System.Diagnostics;
 
     using Microsoft.AspNetCore.Mvc;
 
-    using LuminousStudio.Models;
+    using LuminousStudio.Web.ViewModels;
 
     public class HomeController : BaseController
     {
@@ -27,10 +27,22 @@ namespace LuminousStudio.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpGet]
+        public IActionResult Error(int? statusCode = null)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return statusCode switch
+            {
+                400 => View("~/Views/Shared/Errors/Error400.cshtml"),
+                401 => View("~/Views/Shared/Errors/Error401.cshtml"),
+                403 => View("~/Views/Shared/Errors/Error403.cshtml"),
+                404 => View("~/Views/Shared/Errors/Error404.cshtml"),
+                500 => View("~/Views/Shared/Errors/Error500.cshtml"),
+                503 => View("~/Views/Shared/Errors/Error503.cshtml"),
+                _ => View(new ErrorViewModel
+                {
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                })
+            };
         }
     }
 }

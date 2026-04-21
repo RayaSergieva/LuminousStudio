@@ -1,4 +1,4 @@
-﻿namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Web.Controllers
 {
     using System.Security.Claims;
 

@@ -1,10 +1,10 @@
-﻿namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Web.Controllers
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    using LuminousStudio.Core.Contracts;
-    using LuminousStudio.Models.ShoppingCart;
+    using LuminousStudio.Services.Core.Contracts;
+    using LuminousStudio.Web.ViewModels.ShoppingCart;
 
     [Authorize]
     public class ShoppingCartController : BaseController
@@ -29,7 +29,14 @@
 
             var model = new ShoppingCartVM
             {
-                ShoppingCartList = items
+                ShoppingCartList = items.Select(item => new ShoppingCartItemVM
+                {
+                    Id = item.Id,
+                    ProductName = item.TiffanyLamp.TiffanyLampName,
+                    Picture = item.TiffanyLamp.Picture,
+                    Count = item.Count,        
+                    Price = item.Price
+                })
             };
 
             return View(model);
@@ -61,10 +68,14 @@
             }
 
             var item = await _cartService.GetCartItemByIdAsync(id);
-
             if (item == null || item.ApplicationUserId != userId.Value)
             {
                 return NotFound();
+            }
+
+            if (item.Count >= item.TiffanyLamp.Quantity)
+            {
+                return RedirectToAction(nameof(Index));
             }
 
             item.Count++;

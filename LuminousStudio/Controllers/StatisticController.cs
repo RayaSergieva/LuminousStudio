@@ -1,12 +1,13 @@
-﻿namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Web.Controllers
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    using LuminousStudio.Core.Contracts;
-    using LuminousStudio.Models.Statistic;
+    using LuminousStudio.Services.Core.Contracts;
+    using LuminousStudio.Services.Common;
+    using LuminousStudio.Web.ViewModels.Statistic;
 
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = ApplicationRoles.Administrator)]
     public class StatisticController : BaseController
     {
         private readonly IStatisticService _statisticsService;

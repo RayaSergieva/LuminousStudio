@@ -1,4 +1,4 @@
-﻿@model LuminousStudio.Models.ShoppingCart.ShoppingCartVM
+﻿@model LuminousStudio.Web.ViewModels.ShoppingCart.ShoppingCartVM
 
 @{
     ViewData["Title"] = "Shopping Cart";
@@ -48,11 +48,11 @@
                                     {
                                         <tr>
                                             <td style="width: 100px;">
-                                                <img src="@item.TiffanyLamp.Picture"
-                                                     alt="@item.TiffanyLamp.TiffanyLampName"
+                                                <img src="@item.Picture"
+                                                     alt="@item.ProductName"
                                                      class="img-fluid rounded shadow-sm" />
                                             </td>
-                                            <td>@item.TiffanyLamp.TiffanyLampName</td>
+                                            <td>@item.ProductName</td>
                                             <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
                                             <td>@item.Count</td>
                                             <td>@((item.Price * item.Count).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US")))</td>

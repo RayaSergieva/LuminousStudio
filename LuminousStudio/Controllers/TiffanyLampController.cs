@@ -1,15 +1,16 @@
-﻿namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Web.Controllers
 {
+    using LuminousStudio.Data.Models;
+    using LuminousStudio.Services.Common;
+    using LuminousStudio.Services.Core.Contracts;
+    using LuminousStudio.Web.Common;
+    using LuminousStudio.Web.ViewModels.LampStyle;
+    using LuminousStudio.Web.ViewModels.Manufactorer;
+    using LuminousStudio.Web.ViewModels.TiffanyLamp;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    using LuminousStudio.Core.Contracts;
-    using LuminousStudio.Infrastructure.Data.Entities;
-    using LuminousStudio.Models.LampStyle;
-    using LuminousStudio.Models.Manufactorer;
-    using LuminousStudio.Models.TiffanyLamp;
-
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = ApplicationRoles.Administrator)]
     public class TiffanyLampController : BaseController
     {
         private readonly ITiffanyLampService _tiffanyLampService;
@@ -25,9 +26,15 @@
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult> Index(string searchStringLampStyleName, string searchStringManufacturerName)
+        public async Task<ActionResult> Index(
+            string searchStringLampStyleName,
+            string searchStringManufacturerName,
+            int page = 1)
         {
-            List<TiffanyLampIndexVM> tiffanyLamps = (await _tiffanyLampService.GetTiffanyLampsAsync(searchStringLampStyleName, searchStringManufacturerName))
+            const int pageSize = 6;
+
+            var allLamps = (await _tiffanyLampService
+                .GetTiffanyLampsAsync(searchStringLampStyleName, searchStringManufacturerName))
                 .Select(tiffanyLamp => new TiffanyLampIndexVM
                 {
                     Id = tiffanyLamp.Id,
@@ -40,7 +47,10 @@
                     Discount = tiffanyLamp.Discount
                 }).ToList();
 
-            return View(tiffanyLamps);
+            var paginatedLamps = PaginatedList<TiffanyLampIndexVM>
+                .Create(allLamps, page, pageSize);
+
+            return View(paginatedLamps);
         }
 
         [HttpGet]
