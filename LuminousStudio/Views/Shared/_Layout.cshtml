@@ -14,28 +14,40 @@
     @RenderSection("Styles", required: false)
 
     <style>
-        .navbar.glass {
-            background-color: rgba(0, 0, 0, 0.75) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+            .navbar.glass {
+                background-color: rgba(0, 0, 0, 0.75) !important;
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
 
-        .dropdown .btn {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+            .dropdown .btn {
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
 
-        .footer {
-            background-color: rgba(0, 0, 0, 0.75);
-        }
+            html, body {
+                height: 100%;
+            }
 
-        body {
-            padding-top: 80px;
-        }
+            body {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+                padding-top: 80px;
+            }
 
-        form.logout-form {
-            display: inline;
-        }
+            .container {
+                flex: 1;
+            }
+
+            .footer {
+                background-color: rgba(0, 0, 0, 0.75);
+                margin-top: auto;
+            }
+
+            form.logout-form {
+                display: inline;
+            }
     </style>
 </head>
 <body class="@ViewData["BodyClass"]">
@@ -51,50 +63,79 @@
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav me-auto mb-2 mb-sm-0">
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="AboutUs">About Us</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="AboutUs">About Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="TiffanyLamp" asp-action="Index">TiffanyLamps</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="TiffanyLamp" asp-action="Index">TiffanyLamps</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="lampStylesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="lampStylesDropdown"
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Tiffany Lamp Styles
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="lampStylesDropdown">
-                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Table Lamp">Table Lamp</a></li>
-                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Floor Lamp">Floor Lamp</a></li>
-                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Chandelier">Chandelier</a></li>
-                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Wall Sconce">Wall Sconce</a></li>
-                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Pendant Lamp">Pendant Lamp</a></li>
-                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Ceiling Lamp">Ceiling Lamp</a></li>
-                                <li><a class="dropdown-item" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Banker’s Lamp">Banker’s Lamp</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Table Lamp">Table Lamp</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Floor Lamp">Floor Lamp</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Chandelier">Chandelier</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Wall Sconce">Wall Sconce</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Pendant Lamp">Pendant Lamp</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Ceiling Lamp">Ceiling Lamp</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="TiffanyLamp" asp-action="Index" asp-route-searchStringLampStyleName="Banker's Lamp">Banker's Lamp</a></li>
                             </ul>
                         </li>
 
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Order" asp-action="MyOrders">My Orders</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Order" asp-action="MyOrders">My Orders</a>
                             </li>
                         }
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="Contacts">Contacts</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Contacts">Contacts</a>
                         </li>
 
-                        @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole(ApplicationRoles.Administrator))
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="statsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Statistic Module
+                                <a class="nav-link dropdown-toggle text-white" href="#" role="button"
+                                       data-bs-toggle="dropdown" aria-expanded="false">
+                                    Admin Panel
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="statsDropdown">
-                                    <li><a class="dropdown-item" href="/Client/Index">Clients</a></li>
-                                    <li><a class="dropdown-item" href="/Order/Index">Orders</a></li>
-                                    <li><a class="dropdown-item" href="/Statistic/Index">Statistic</a></li>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Admin"
+                                               asp-controller="Home" asp-action="Index">
+                                            Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Admin"
+                                               asp-controller="UserManagement" asp-action="Index">
+                                            Clients
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Admin"
+                                               asp-controller="LampManagement" asp-action="Index">
+                                            Lamps
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Admin"
+                                               asp-controller="OrderManagement" asp-action="Index">
+                                            Orders
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Admin"
+                                               asp-controller="Statistic" asp-action="Index">
+                                            Statistics
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         }
@@ -102,18 +143,20 @@
 
                     <ul class="navbar-nav d-flex flex-row align-items-center gap-3">
                         <li class="nav-item">
-                            <a class="nav-link text-white position-relative" asp-controller="ShoppingCart" asp-action="Index">
+                            <a class="nav-link text-white position-relative" asp-area=""
+                                   asp-controller="ShoppingCart" asp-action="Index">
                                 <i class="bi bi-cart"></i> Cart
                             </a>
                         </li>
 
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <span class="nav-link text-white">Hello @User.Identity.Name!</span>
+                                <span class="nav-link text-white">Hello @User.Identity?.Name!</span>
                             </li>
                             <li class="nav-item">
-                                <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="logout-form">
+                                <form asp-area="Identity" asp-page="/Account/Logout"
+                                      method="post" class="logout-form">
                                     <button type="submit" class="btn btn-link nav-link text-white">Logout</button>
                                 </form>
                             </li>
@@ -141,9 +184,12 @@
 
     <footer class="footer text-center mt-5">
         <div class="container py-1">
-            <a asp-controller="Home" asp-action="AboutUs" class="text-white fs-5 mx-3">About us</a>
-            <a asp-controller="TiffanyLamp" asp-action="Index" class="text-white fs-5 mx-3">Tiffany Lamps</a>
-            <a asp-controller="Home" asp-action="Contacts" class="text-white fs-5 mx-3">Contacts</a>
+            <a asp-area="" asp-controller="Home" asp-action="AboutUs"
+               class="text-white fs-5 mx-3">About us</a>
+            <a asp-area="" asp-controller="TiffanyLamp" asp-action="Index"
+               class="text-white fs-5 mx-3">Tiffany Lamps</a>
+            <a asp-area="" asp-controller="Home" asp-action="Contacts"
+               class="text-white fs-5 mx-3">Contacts</a>
         </div>
     </footer>
 
