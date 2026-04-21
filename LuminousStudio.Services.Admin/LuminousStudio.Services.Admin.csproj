@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LuminousStudio.Data.Common\LuminousStudio.Data.Common.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Data.Models\LuminousStudio.Data.Models.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Data\LuminousStudio.Data.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Services.Common\LuminousStudio.Services.Common.csproj" />
+    <ProjectReference Include="..\LuminousStudio.Web.Common\LuminousStudio.Web.Common.csproj" />
+  </ItemGroup>
+
+</Project>
