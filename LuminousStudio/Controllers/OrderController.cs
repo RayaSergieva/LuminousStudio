@@ -1,13 +1,14 @@
-﻿namespace LuminousStudio.Controllers
+﻿namespace LuminousStudio.Web.Controllers
 {
     using System.Globalization;
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    using LuminousStudio.Core.Contracts;
-    using LuminousStudio.Infrastructure.Data.Entities;
-    using LuminousStudio.Models.Order;
+    using LuminousStudio.Services.Core.Contracts;
+    using LuminousStudio.Services.Common;
+    using LuminousStudio.Data.Models;
+    using LuminousStudio.Web.ViewModels.Order;
 
     [Authorize]
     public class OrderController : BaseController
@@ -15,19 +16,22 @@
         private readonly ITiffanyLampService _tiffanyLampService;
         private readonly IOrderService _orderService;
         private readonly IShoppingCartService _shoppingCartService;
+        private readonly IStockHubService _stockHubService;
 
         public OrderController(
             ITiffanyLampService tiffanyLampService,
             IOrderService orderService,
-            IShoppingCartService shoppingCartService)
+            IShoppingCartService shoppingCartService,
+            IStockHubService stockHubService)
         {
             _tiffanyLampService = tiffanyLampService;
             _orderService = orderService;
             _shoppingCartService = shoppingCartService;
+            _stockHubService = stockHubService;
         }
 
         [HttpGet]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = ApplicationRoles.Administrator)]
         public async Task<ActionResult> Index()
         {
             List<OrderIndexVM> orders = (await _orderService.GetOrdersAsync())
@@ -74,13 +78,28 @@
                 return Unauthorized();
             }
 
-            TiffanyLamp? tiffanyLamp = await _tiffanyLampService.GetTiffanyLampByIdAsync(bindingModel.TiffanyLampId);
+            TiffanyLamp? tiffanyLamp = await _tiffanyLampService
+                .GetTiffanyLampByIdAsync(bindingModel.TiffanyLampId);
+
             if (tiffanyLamp == null || tiffanyLamp.Quantity < bindingModel.Quantity)
             {
                 return RedirectToAction(nameof(Denied));
             }
 
-            await _orderService.CreateAsync(bindingModel.TiffanyLampId, currentUserId.Value, bindingModel.Quantity);
+            await _orderService.CreateAsync(
+                bindingModel.TiffanyLampId, currentUserId.Value, bindingModel.Quantity);
+
+            var updatedLamp = await _tiffanyLampService
+                .GetTiffanyLampByIdAsync(bindingModel.TiffanyLampId);
+
+            if (updatedLamp != null)
+            {
+                await _stockHubService.NotifyStockUpdateAsync(
+                    updatedLamp.Id,
+                    updatedLamp.Quantity,
+                    updatedLamp.TiffanyLampName);
+            }
+
             return RedirectToAction(nameof(Index), "TiffanyLamp");
         }
 
@@ -94,7 +113,8 @@
                 return Unauthorized();
             }
 
-            var cartItems = (await _shoppingCartService.GetCartItemsAsync(userId.Value)).ToList();
+            var cartItems = (await _shoppingCartService
+                .GetCartItemsAsync(userId.Value)).ToList();
 
             if (!cartItems.Any())
             {
@@ -103,7 +123,29 @@
 
             foreach (var cart in cartItems)
             {
-                await _orderService.CreateAsync(cart.TiffanyLampId, userId.Value, cart.Count);
+                var lamp = await _tiffanyLampService
+                    .GetTiffanyLampByIdAsync(cart.TiffanyLampId);
+                if (lamp == null || lamp.Quantity < cart.Count)
+                {
+                    return RedirectToAction(nameof(Denied));
+                }
+            }
+
+            foreach (var cart in cartItems)
+            {
+                await _orderService.CreateAsync(
+                    cart.TiffanyLampId, userId.Value, cart.Count);
+
+                var updatedLamp = await _tiffanyLampService
+                    .GetTiffanyLampByIdAsync(cart.TiffanyLampId);
+
+                if (updatedLamp != null)
+                {
+                    await _stockHubService.NotifyStockUpdateAsync(
+                        updatedLamp.Id,
+                        updatedLamp.Quantity,
+                        updatedLamp.TiffanyLampName);
+                }
             }
 
             await _shoppingCartService.ClearAsync(userId.Value);
@@ -126,7 +168,8 @@
                 return Unauthorized();
             }
 
-            List<OrderIndexVM> orders = (await _orderService.GetOrdersByUserAsync(currentUserId.Value))
+            List<OrderIndexVM> orders = (await _orderService
+                .GetOrdersByUserAsync(currentUserId.Value))
                 .Select(MapToOrderVM)
                 .ToList();
 
@@ -136,7 +179,8 @@
         private static OrderIndexVM MapToOrderVM(Order x) => new OrderIndexVM
         {
             Id = x.Id,
-            OrderDate = x.OrderDate.ToString("dd-MMM-yyyy hh:mm", CultureInfo.InvariantCulture),
+            OrderDate = x.OrderDate.ToString(
+                "dd-MMM-yyyy hh:mm", CultureInfo.InvariantCulture),
             UserId = x.UserId,
             User = x.User.UserName ?? "Unknown",
             TiffanyLampId = x.TiffanyLampId,
